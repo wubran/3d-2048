@@ -22,7 +22,6 @@
 			var initcamdist = 50; // fov effects (becomes orthographic as approaches infinity)
 			var camdistort = 50; // fov effects (becomes orthographic as approaches infinity)
 			var flammability = 0.01;
-			var burntime = 1;
 			var sliding = false;
 			var clickstart = [0,0];
 			var dotradius = 3;
@@ -30,6 +29,7 @@
 			var togglelines = false;
 			const gridth = 4;
 			var opacity = 0.7;
+			var revolvespeed = 0.01;
 
 			const colormap = new Map();
 			colormap.set(2, "rgb(200,200,200,"+opacity+")")
@@ -95,9 +95,9 @@
 				}
 			}, false);
 
-			function getBurntime(){return burntime;}
-			function setBurntime(setTo){burntime = setTo;}
-			var burnTimeSlider = new Slider("idk lol", 0.5, 0, 1, canvas.width/10, setBurntime, canvas.width/5, getBurntime, 2)
+			function getRevolveSpeed(){return revolvespeed;}
+			function setRevolveSpeed(setTo){revolvespeed = setTo;}
+			var revolveSpeedSlider = new Slider("revolve speed", 0.01, 0, 0.05, canvas.width/10, setRevolveSpeed, canvas.width/5, getRevolveSpeed, 2)
 			function getCamdist(){return 100/camdistort;}
 			function setCamdist(setTo){camdistort = 100/setTo;}
 			var camdistSlider = new Slider("perspective distortion", 100/camdistort, 100/100000, 100/10, canvas.width/10, setCamdist, canvas.width/5, getCamdist, 2)
@@ -105,7 +105,7 @@
 
 			function onClick(event){
 				if(canvas.style.cursor == "pointer"){
-					burnTimeSlider.clickEvent(event.clientX, event.clientY)
+					revolveSpeedSlider.clickEvent(event.clientX, event.clientY)
 					camdistSlider.clickEvent(event.clientX, event.clientY)
 					sliding = true;
 				}else{
@@ -117,14 +117,14 @@
 			function onRelease(event){
 				butt = -1;
 				sliding = false;
-				burnTimeSlider.releaseEvent()
+				revolveSpeedSlider.releaseEvent()
 				camdistSlider.releaseEvent()
 			}
 
 			function onMouseMove(event){
 			  mouseX = event.pageX;
 			  mouseY = event.pageY;
-				burnTimeSlider.mouseMove(mouseX, mouseY)
+				revolveSpeedSlider.mouseMove(mouseX, mouseY)
 				camdistSlider.mouseMove(mouseX, mouseY)
 				if(butt == 2){
 					let diffx = mouseX-clickstart[0];
@@ -361,19 +361,22 @@
 					this.pos = [x,y,z];
 					this.value = val;
 					this.points = [];
-					this.updatepoints();
-
+					this.updatepoints(cubesize);
+					this.popTimer = 0;
+					this.slideTimer = 100;
+					this.slideFrom = [];
+					this.slideTo = [];
 				}
 				swipe(xin,yin,zin){ //inputs the target indexes
 
 				}
-				updatepoints(){
+				updatepoints(radius){
 					this.points = [];
 					for(let i = 0; i<8; i++){ // all points for a cube relative to the center
 						let count = i;
 						let coords = [];
 						for(let j = 0; j<3; j++){
-							coords.push(cubesize*((count%2)*2-1));
+							coords.push(radius*((count%2)*2-1));
 							count = count>>>1;
 						}
 						// console.log(coords);
@@ -381,7 +384,22 @@
 					}
 				}
 				draw(){
-
+					let popTime = 10; //frames
+					if(this.popTimer<popTime){
+						this.popTimer+=1;
+						this.updatepoints(cubesize*(this.popTimer/popTime));
+					}
+					let slideTime = 10;
+					if(this.slideTimer<slideTime){
+						this.slideTimer+=1;
+						for(let i = 0; i<3; i++){
+							if(this.slideTo[i]!=this.slideFrom[i]){
+								console.log("me")
+								this.pos[i] = this.slideFrom[i] + (this.slideTo[i]-this.slideFrom[i])*(this.slideTimer/slideTime);
+							}
+						}
+						this.updatepoints(cubesize)
+					}
 					let color = colormap.get(this.value);
 
 					for(let dot of this.points){
@@ -435,6 +453,8 @@
 								[[0,0,-1],[0,0,1]]];
 					let dir = dirs[xyz][(sign+1)/2];
 					let newarray = createCubeArray(gridth);
+					let changed = false;
+
 					for(let i = 0; i<gridth; i++){
 						for(let j = 0; j<gridth; j++){
 							for(let k = 0; k<gridth; k++){
@@ -458,20 +478,25 @@
 									//console.log(ray);
 									if(ray.includes(null)){
 										let nullcount = 0;
+										changed = true;
 										for(let each of ray){
 											if(each == null){
 												nullcount++;
 											}
 										}
+
 										let newx = i+nullcount*dir[0];
 										let newy = j+nullcount*dir[1];
 										let newz = k+nullcount*dir[2];
-										console.log(this.cubes[i][j][k].pos)
+										// console.log(this.cubes[i][j][k].pos)
+										let oldpos = this.cubes[i][j][k].pos;
 										for(let bruh = 0; bruh<3; bruh++){
-											this.cubes[i][j][k].pos[bruh] = (-3*cubesize) + 2*cubesize*[newx,newy,newz][bruh];
+											this.cubes[i][j][k].slideTo[bruh] = (-3*cubesize) + 2*cubesize*[newx,newy,newz][bruh];
 										}
-										this.cubes[i][j][k].updatepoints();
-										console.log(this.cubes[i][j][k].pos)
+										this.cubes[i][j][k].slideFrom = oldpos;
+										this.cubes[i][j][k].slideTimer = 0;
+										this.cubes[i][j][k].updatepoints(cubesize);
+										// console.log(this.cubes[i][j][k].pos)
 										newarray[newx][newy][newz] = this.cubes[i][j][k];
 										this.cubes[i][j][k].swipe(newx,newy,newz);
 									} else {
@@ -481,9 +506,13 @@
 							}
 						}
 					}
-					console.log(this.cubes);
-					console.log(newarray);
+					// console.log(this.cubes);
+					// console.log(newarray);
+
 					this.cubes = newarray;
+					if(changed){
+						this.newcube()
+					}
 					refresh();
 				}
 				draw(){
@@ -565,6 +594,19 @@
 				}
 			}
 
+			function drawplates(){ //convert to the controls GUI thingy
+				for(let dot of originpoints){
+					dot.project(camera);
+					dot.draw();
+					ctx.lineWidth = 2;
+					ctx.strokeStyle = dot.color;
+					ctx.beginPath();
+					ctx.moveTo(xcenter,ycenter);
+					ctx.lineTo(dot.x, dot.y);
+					ctx.stroke();
+				}
+			}
+
 			function drawmesh(mesh){
 				ctx.lineWidth = 1;
 				for(let triangle of mesh){
@@ -610,7 +652,8 @@
 			}
 
 			//grid.cubes[1][1][2] = new Cube(cubesize,cubesize,cubesize,8);
-
+			grid.newcube()
+			grid.newcube()
 			console.log(grid.cubes);
 			refresh();
 
@@ -619,7 +662,7 @@
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
 				ctx.textAlign = "left"
 
-				burnTimeSlider.draw(4*canvas.width/20, 14*canvas.height/40);
+				revolveSpeedSlider.draw(4*canvas.width/20, 14*canvas.height/40);
 				camdistSlider.draw(4*canvas.width/20, 19*canvas.height/40); //
 
 				ctx.font = canvas.width / 40 + "px Arial";
@@ -655,14 +698,13 @@
 			}
 
 			setInterval(function(){
-				if(!pause && (butt <= 0)){
-					camera.orbit(0.01,0);
-					refresh();
+				if(!pause && (butt==-1)){
+					if(revolvespeed != 0){
+						camera.orbit(revolvespeed,0);
+					}
 				}
+				refresh();
 
-				if(butt!==-1){ //if not clicking
-					refresh();
-				}
 			}, 1000/60);
 
 
@@ -675,9 +717,9 @@
 			  ctx.fillRect(0, 0, canvas.width, canvas.height);
 				xcenter = canvas.width/2;
 				ycenter = canvas.height/2;
-				//burnTimeSlider.
+				//revolveSpeedSlider.
 				//camdistSlider.
-				burnTimeSlider = new Slider("idk lol", 0.5, 0, 1, canvas.width/10, setBurntime, canvas.width/5, getBurntime, 2)
+				revolveSpeedSlider = new Slider("revolve speed", 0.5, 0, 1, canvas.width/10, setRevolveSpeed, canvas.width/5, getRevolveSpeed, 2)
 				camdistSlider = new Slider("perspective distortion", 100/camdistort, 100/100000, 100/10, canvas.width/10, setCamdist, canvas.width/5, getCamdist, 2)
 
 				if(initialize != true){
