@@ -38,6 +38,7 @@
 			var revolvespeed = 0.01;
 			var gapness = 0.8;
 			const cubesize = 1.5;
+			var explodeFac = 3;
 
 			const colormap = new Map();
 			colormap.set(69, "rgb(10,10,10,")
@@ -82,8 +83,9 @@
 			}
 
 			//initialize camera
-		  let legs = initcamdist/Math.sqrt(3);
-		  camera = new Cam(legs,legs,legs);
+		  //let legs = initcamdist/Math.sqrt(3);
+		  //camera = new Cam(legs,legs,legs);
+			camera = new Cam(39.33347860859019, 24.170967999528635, 19.20004600289643);
 
 			//initialize origin
 		  let originsize = gridth*2.5;
@@ -130,8 +132,8 @@
 			function refresh(){
 				fillscreen();
 				camera.update();
-				draworigin();
 				outline.draw();
+				draworigin();
 				grid.draw();
 			}
 

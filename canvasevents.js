@@ -1,5 +1,4 @@
       canvas = document.getElementById('screen');
-
 			canvas.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
 
 			canvas.addEventListener('mousedown', onClick);
@@ -15,9 +14,32 @@
 			    case 'Escape':
 			      return;
 			    case "ArrowUp":
-			      grid.newcube();
-			      refresh();
+            if(grid.explodeList[2]){
+  			      grid.explode([1,1,1]);
+              grid.explodeList = [false,false,false];
+            } else{
+              grid.explode([1,1,explodeFac]);
+              grid.explodeList = [false,false,true];
+            }
 			      return;
+          case "ArrowLeft":
+            if(grid.explodeList[0]){
+              grid.explode([1,1,1]);
+              grid.explodeList = [false,false,false];
+            } else{
+              grid.explode([explodeFac,1,1]);
+              grid.explodeList = [true,false,false];
+            }
+            return;
+          case "ArrowRight":
+            if(grid.explodeList[1]){
+              grid.explode([1,1,1]);
+              grid.explodeList = [false,false,false];
+            } else{
+              grid.explode([1,explodeFac,1]);
+              grid.explodeList = [false,true,false];
+            }
+            return;
 			    case "q":
 			      grid.swipe(0,-1);
 			      return;

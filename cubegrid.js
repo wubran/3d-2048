@@ -59,7 +59,7 @@ class Cube{
     drawface(this.points, [4, 5, 7, 6], color);
 
     if(this.value == 69){return;}
-    
+
     let tempcenter = new Point(...this.pos, "red");
     tempcenter.project(camera);
     ctx.font = "" + (200/Math.sqrt(initcamdist)) + "px Arial";
@@ -77,7 +77,7 @@ class Cube{
 class Grid{
   constructor(){
     this.cubes = createCubeArray(gridth);
-    this.values;
+    this.explodeList = [false, false, false];
   }
   newcube(){
     let emptyIndeces = [];
@@ -98,7 +98,13 @@ class Grid{
     let whichone = randomRange(0, emptyIndeces.length - 1)
     let xyz = [0,0,0];
     for(let i = 0; i<3; i++){
-      xyz[i] = (-(gridth-1)*cubesize) + 2*cubesize*emptyIndeces[whichone][i];
+      let urmom;
+      if(grid.explodeList[i]){
+        urmom = explodeFac;
+      } else{
+        urmom = 1;
+      }
+      xyz[i] = urmom*((-(gridth-1)*cubesize) + 2*cubesize*emptyIndeces[whichone][i]);
     }
     let thecube = new Cube(xyz[0],xyz[1],xyz[2], 2*randomRange(1,2));
     this.cubes[emptyIndeces[whichone][0]][emptyIndeces[whichone][1]][emptyIndeces[whichone][2]] = thecube;
@@ -147,11 +153,17 @@ class Grid{
               // console.log(this.cubes[i][j][k].pos)
               let oldpos = this.cubes[i][j][k].pos;
               for(let bruh = 0; bruh<3; bruh++){
-                this.cubes[i][j][k].slideTo[bruh] = (-(gridth-1)*cubesize) + 2*cubesize*[newx,newy,newz][bruh];
+                let urmom;
+                if(grid.explodeList[bruh]){
+                  urmom = explodeFac;
+                } else{
+                  urmom = 1;
+                }
+                this.cubes[i][j][k].slideTo[bruh] = urmom*((-(gridth-1)*cubesize) + 2*cubesize*[newx,newy,newz][bruh]);
               }
               this.cubes[i][j][k].slideFrom = oldpos;
               this.cubes[i][j][k].slideTimer = 0;
-              this.cubes[i][j][k].updatepoints(cubesize);
+              //this.cubes[i][j][k].updatepoints(cubesize);
               // console.log(this.cubes[i][j][k].pos)
               newarray[newx][newy][newz] = this.cubes[i][j][k];
             } else {
@@ -208,6 +220,23 @@ class Grid{
 
     for(let indarry of indeces){
       this.cubes[indarry[0]][indarry[1]][indarry[2]].draw();
+    }
+  }
+  explode(factors){
+    for(let i = 0; i<gridth; i++){
+      for(let j = 0; j<gridth; j++){
+        for(let k = 0; k<gridth; k++){
+          if(this.cubes[i][j][k] != null){
+            this.cubes[i][j][k].slideTimer = 0;
+            for(let l = 0; l<3; l++){
+              this.cubes[i][j][k].slideFrom[l] = this.cubes[i][j][k].pos[l];
+              this.cubes[i][j][k].slideTo[l] = factors[l]*((-(gridth-1)*cubesize) + 2*cubesize*[i,j,k][l]);
+            }
+            // console.log(this.cubes[i][j][k].slideFrom)
+            // console.log(this.cubes[i][j][k].slideTo)
+          }
+        }
+      }
     }
   }
 }
