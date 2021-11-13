@@ -175,14 +175,14 @@ class Point{
     this.x = this.iscale*bigness + xcenter;
     this.y = this.jscale*bigness*Math.sign(cam.vector[2]) + ycenter; //math.sign is a TEMPORARY FIX!!!!
   }
-  draw(){
+  draw(dotrad = dotradius){
     // let pointsize = 200/Math.hypot(this.slopes[0], this.slopes[1],this.slopes[2]);
     // if(pointsize >= 6){
     // 	pointsize = 6;
     // } //issue: pointsize would change with the perspective disortion
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, dotradius, 0, 2 * Math.PI);
+    ctx.arc(this.x, this.y, dotrad, 0, 2 * Math.PI);
     ctx.fill();
     //console.log("ok")
   }

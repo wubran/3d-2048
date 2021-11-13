@@ -1,4 +1,4 @@
-//this file contains the Cube and Grid classes and the createCubeArray function.
+//this file contains the Cube & Grid classes and the createCubeArray & drawface functions.
 
 class Cube{
   constructor(x,y,z,val){
@@ -41,7 +41,7 @@ class Cube{
       }
       this.updatepoints(cubesize*gapness)
     }
-    let color = colormap.get(this.value);
+    let color = colormap.get(this.value)+opacity+")";
 
     for(let dot of this.points){
       dot.project(camera);
@@ -55,6 +55,17 @@ class Cube{
     drawface(this.points, [0, 2, 6, 4], color);
     drawface(this.points, [1, 3, 7, 5], color);
     drawface(this.points, [4, 5, 7, 6], color);
+
+    let tempcenter = new Point(...this.pos, "red");
+    tempcenter.project(camera);
+    ctx.font = "" + (200/Math.sqrt(initcamdist)) + "px Arial";
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = "black";
+    ctx.fillText(this.value, tempcenter.x, tempcenter.y);
+    ctx.shadowBlur = 0;
 
   }
 }
@@ -106,7 +117,7 @@ class Grid{
             if(sign==1){
               cap = gridth - [i,j,k][xyz];
             } else{
-              cap =  [i,j,k][xyz]+1;
+              cap = [i,j,k][xyz]+1;
             }
             while(steps < cap){ //while in bounds
               if(this.cubes[i+steps*dir[0]] != null && this.cubes[i+steps*dir[0]][j+steps*dir[1]] != null && this.cubes[i+steps*dir[0]][j+steps*dir[1]][k+steps*dir[2]] != null){
@@ -208,4 +219,16 @@ function createCubeArray(sidelength){
   }
   // console.log(arry);
   return arry;
+}
+
+function drawface(points, indeces, color){
+  ctx.beginPath();
+  ctx.strokeStyle = "rgba(255,255,255,0.5)";
+  ctx.fillStyle = color;
+  ctx.moveTo(points[indeces[3]].x, points[indeces[3]].y);
+  for(let index of indeces){
+    ctx.lineTo(points[index].x, points[index].y);
+  }
+  ctx.fill();
+  ctx.stroke();
 }
