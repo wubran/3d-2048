@@ -100,10 +100,10 @@
           if(index!=-1){
             indicator = new Point(...originpoints[index].pos, originpoints[index].color);
             for(let i = 0; i<3; i++){
-              indicator.pos[i]*=2;
+              indicator.pos[i]*=1.5;
             }
             indicator.project(camera);
-            indicator.draw(6);
+            indicator.draw(originsize);
           }
         }
 				clickstart = [mouseX,mouseY];

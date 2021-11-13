@@ -40,9 +40,11 @@
 			const cubesize = 1.5;
 
 			const colormap = new Map();
+			colormap.set(69, "rgb(10,10,10,")
 			colormap.set(2, "rgb(200,200,200,")
 			colormap.set(4, "rgb(200,200,150,")
 			colormap.set(8, "rgb(255,200,100,")
+
 
 			canvasResize(true);
 
@@ -84,7 +86,7 @@
 		  camera = new Cam(legs,legs,legs);
 
 			//initialize origin
-		  let originsize = gridth*2;
+		  let originsize = gridth*2.5;
 		  originpoints = [];
 		  originpoints.push(new Point(originsize,0,0,"red"));
 		  originpoints.push(new Point(0,originsize,0,"lime"));
@@ -92,6 +94,10 @@
 		  originpoints.push(new Point(-originsize,0,0,"red"));
 		  originpoints.push(new Point(0,-originsize,0,"lime"));
 		  originpoints.push(new Point(0,0,-originsize,"rgba(120,120,255,1)"));
+
+			outline = new Cube(0,0,0,69);
+			outline.popTimer = 10;
+			outline.updatepoints(6);
 
 			let indicator;
 
@@ -125,6 +131,7 @@
 				fillscreen();
 				camera.update();
 				draworigin();
+				outline.draw();
 				grid.draw();
 			}
 
@@ -198,14 +205,12 @@
 				refresh();
 				if(startx!=0){
 					ctx.beginPath();
-					let dist = 10*Math.hypot(mouseX-startx,mouseY-starty)/(canvas.width+canvas.height);
-
-					var red = 100 * Math.sin(dist) + 180;
-					var green = 100 * Math.sin(dist+2*Math.PI/3) + 180;
-					var blue = 100 * Math.sin(dist+4*Math.PI/3) + 180;
-
-					ctx.strokeStyle = "rgba("+red+","+green+","+blue+",1)"
-					ctx.lineWidth = 2+dist/100;
+					if(indicator!=null){
+						ctx.strokeStyle = indicator.color;
+					} else{
+						ctx.strokeStyle = "white";
+					}
+					ctx.lineWidth = 5;
 					ctx.shadowBlur = 5;
 					ctx.shadowColor = "black";
 					ctx.moveTo(startx,starty);
@@ -215,9 +220,8 @@
 					//console.log((mouseX-startx)/(mouseY-starty))
 					//pickdirection()
 					if(indicator!=null){
-						indicator.draw(6);
+						indicator.draw(originsize);
 					}
-
 				}
 
 			}, 1000/60);

@@ -48,7 +48,9 @@ class Cube{
       dot.color = color;
       dot.draw();
     }
-
+    if(this.value == 69){
+      color = "rgb(255,255,255,0)";
+    }
     drawface(this.points, [0, 1, 3, 2], color);
     drawface(this.points, [0, 1, 5, 4], color);
     drawface(this.points, [2, 3, 7, 6], color);
@@ -56,6 +58,8 @@ class Cube{
     drawface(this.points, [1, 3, 7, 5], color);
     drawface(this.points, [4, 5, 7, 6], color);
 
+    if(this.value == 69){return;}
+    
     let tempcenter = new Point(...this.pos, "red");
     tempcenter.project(camera);
     ctx.font = "" + (200/Math.sqrt(initcamdist)) + "px Arial";
@@ -223,7 +227,7 @@ function createCubeArray(sidelength){
 
 function drawface(points, indeces, color){
   ctx.beginPath();
-  ctx.strokeStyle = "rgba(255,255,255,0.5)";
+  ctx.strokeStyle = "rgba(255,255,255,0.4)";
   ctx.fillStyle = color;
   ctx.moveTo(points[indeces[3]].x, points[indeces[3]].y);
   for(let index of indeces){
