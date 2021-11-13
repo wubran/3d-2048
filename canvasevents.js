@@ -40,6 +40,12 @@
               grid.explodeList = [false,true,false];
             }
             return;
+          case "ArrowDown":
+            if(grid.explodeList[0] || grid.explodeList[1] || grid.explodeList[2]){
+              grid.explode([1,1,1]);
+              grid.explodeList = [false,false,false];
+            }
+            return;
 			    case "q":
 			      grid.swipe(0,-1);
 			      return;

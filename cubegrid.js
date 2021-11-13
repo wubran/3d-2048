@@ -109,7 +109,7 @@ class Grid{
     let thecube = new Cube(xyz[0],xyz[1],xyz[2], 2*randomRange(1,2));
     this.cubes[emptyIndeces[whichone][0]][emptyIndeces[whichone][1]][emptyIndeces[whichone][2]] = thecube;
   }
-  swipe(xyz, sign){ //0,1,2,  -1, 1
+  swipeold(xyz, sign){ //0,1,2,  -1, 1
     const dirs = [[[-1,0,0],[1,0,0]],
           [[0,-1,0],[0,1,0]],
           [[0,0,-1],[0,0,1]]];
@@ -180,6 +180,70 @@ class Grid{
     if(changed){
       this.newcube();
     }
+    refresh();
+  }
+  swipe(xyz, sign){ //0,1,2,  -1, 1
+    const dirs = [[2,0,1],[1,2,0],[0,1,2]];
+    let dir = dirs[xyz];
+    let newarray = createCubeArray(gridth);
+    let axis;
+    for(let i = 0; i<gridth; i++){
+      for(let j = 0; j<gridth; j++){
+        let ray = [];
+        for(let k = 0; k<gridth; k++){
+          axis = [i,j,k];
+          ray.push(this.cubes[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]]);
+        }
+        if(sign>0){
+          ray.reverse()
+          console.log("negative!")
+        }
+        let nullcounter = 0;
+        for(let i = 0; i<gridth; i++){
+          if(ray[i-nullcounter] == null){
+            ray.splice(i-nullcounter,1);
+            nullcounter+=1;
+          }
+        }
+
+        if(ray.length > 1){
+          console.log("start", ray)
+          ray = combine(ray);
+        }
+        while(ray.length<gridth){
+          ray.push(null);
+        }
+        if(sign>0){
+          ray.reverse();
+          console.log("negative!");
+        }
+
+        for(let k = 0; k<ray.length; k++){
+          if(ray[k] != null){
+            axis = [i,j,k];
+            let urmom;
+            for(let bruh = 0; bruh<3; bruh++){
+              if(grid.explodeList[bruh]){
+                urmom = explodeFac;
+              } else{
+                urmom = 1;
+              }
+              ray[k].slideTo[bruh] = urmom*((-(gridth-1)*cubesize) + 2*cubesize*[axis[dir[0]],axis[dir[1]],axis[dir[2]]][bruh]);
+
+            }
+
+            ray[k].slideFrom = ray[k].pos//this.cubes[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]].pos;
+            ray[k].slideTimer = 0;
+            newarray[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]] = ray[k];
+          }
+        }
+      }
+    }
+    console.log(newarray)
+    this.cubes = newarray;
+    // if(changed){
+       this.newcube();
+    // }
     refresh();
   }
   draw(){
@@ -264,4 +328,17 @@ function drawface(points, indeces, color){
   }
   ctx.fill();
   ctx.stroke();
+}
+
+function combine(ray, i=0){
+  if(i >= ray.length-1){
+    console.log("done", ray);
+    return ray;
+  }
+  console.log(i, ray)
+  if(ray[i].value == ray[i+1].value){
+    ray[i].value *= 2;
+    ray.splice(i+1, 1);
+  }
+  return combine(ray, i+1);
 }
