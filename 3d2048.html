@@ -668,11 +668,11 @@
 				ctx.fillStyle = gray;
 				ctx.font = canvas.width / 90 + "px Arial";
 				let notes =["Pitch/Yaw - Right Mouse",
-									"Slide (translate) - Middle Mouse (not yet)",
+									//"Slide (translate) - Middle Mouse (not yet)",
 									"Zoom - Scrollwheel",
 									"Toggle Spinning - Spacebar",
 									"Interact - Left Mouse (not yet)",
-									"Drag in a Binary STL file to view."];
+									"QW AS ZX for axis movements."];
 				let spacing = canvas.width/60;
 				for(var i = 0; i < notes.length; i++){
 					ctx.fillText(notes[i], canvas.width/30, 6*canvas.height/40 + spacing*i);
