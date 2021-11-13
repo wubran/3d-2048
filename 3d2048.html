@@ -3,6 +3,8 @@
 	<body style="padding:0;margin:0;overflow: hidden;">
 		<canvas id="screen"></canvas>
 		<script type="text/javascript" src="slider.js"></script>
+		<script type="text/javascript" src="cubegrid.js"></script>
+		<script type="text/javascript" src="campoint3d.js"></script>
 		<script>
 			canvascolor = "rgba(19, 23, 26, 1)";
 			blurple = "rgba(140, 150, 250, 1)";
@@ -30,15 +32,13 @@
 			const gridth = 4;
 			var opacity = 0.7;
 			var revolvespeed = 0.01;
+			var gapness = 0.8;
+			const cubesize = 1.5;
 
 			const colormap = new Map();
 			colormap.set(2, "rgb(200,200,200,"+opacity+")")
 			colormap.set(4, "rgb(200,200,150,"+opacity+")")
 			colormap.set(8, "rgb(255,200,100,"+opacity+")")
-
-
-			const cubesize = 1.5;
-
 
 			canvasResize(true);
 
@@ -97,7 +97,7 @@
 
 			function getRevolveSpeed(){return revolvespeed;}
 			function setRevolveSpeed(setTo){revolvespeed = setTo;}
-			var revolveSpeedSlider = new Slider("revolve speed", 0.01, 0, 0.05, canvas.width/10, setRevolveSpeed, canvas.width/5, getRevolveSpeed, 2)
+			var revolveSpeedSlider = new Slider("revolve speed", 0.01, 0, 0.05, canvas.width/10, setRevolveSpeed, canvas.width/5, getRevolveSpeed, 3)
 			function getCamdist(){return 100/camdistort;}
 			function setCamdist(setTo){camdistort = 100/setTo;}
 			var camdistSlider = new Slider("perspective distortion", 100/camdistort, 100/100000, 100/10, canvas.width/10, setCamdist, canvas.width/5, getCamdist, 2)
@@ -146,19 +146,6 @@
 				camera.zoom(Math.sign(event.deltaY));
 			}
 
-			function createCubeArray(sidelength){
-				let arry = [];
-				for(let i = 0; i<sidelength; i++){
-					let square = []
-					for(let i = 0; i<sidelength; i++){
-						square.push(Array(sidelength)); //push a line to the square
-					}
-					arry.push(square); //push a square to the cube
-				}
-				// console.log(arry);
-				return arry;
-			}
-
 			function randomRange(min, max){ //inclusive, inclusive
 				let interval = 1 + max-min; //plus 1 because rounding shenanigans
 				let answer = Math.trunc(interval*Math.random() + min);
@@ -168,392 +155,6 @@
 				return answer;
 			}
 
-			//MATH SOURCES:
-				//plane from a point and a normal vector: https://www.youtube.com/watch?v=2sZKZHyaQJ8&ab_channel=TheOrganicChemistryTutor
-				//3d line from two points: https://www.youtube.com/watch?v=JlRagTNGBF0&ab_channel=DavidLippman
-				//point where line intersects plane: https://www.youtube.com/watch?v=qVvvy5hsQwk&ab_channel=patrickJMT
-				//change of basis vectors: https://www.youtube.com/watch?v=P2LTAUO1TdA&ab_channel=3Blue1Brown
-
-			class Cam{
-				constructor(x,y,z){
-					this.pos = [x,y,z];
-					this.origin = [0,0,0];
-					this.vector = [0,0,0]; //also doubles as plane abc
-
-					this.pdist = initcamdist*planetosize;
-					this.ppoint = [0,0,0];
-					this.pconst = 0;
-					this.pdistratio = 0;
-
-					this.ihat = [0,0,0];
-					this.jhat = [0,0,0];
-
-					this.yaw = Math.atan(this.pos[1]/this.pos[0]);
-					this.pitch = 0; //IDKK???
-				}
-				update(){
-					for(var i = 0; i < 3; i++){
-						this.vector[i] = this.pos[i]-this.origin[i];
-					}
-					let dist = Math.hypot(this.vector[0], this.vector[1], this.vector[2]);
-					this.pdistratio = 1+this.pdist/dist;
-					this.pconst = 0;
-					for(var i = 0; i < 3; i++){
-						this.ppoint[i] = this.vector[i]*this.pdistratio; //find the plane point via similar triangles
-						this.pconst += this.vector[i]*this.ppoint[i]; //axp + byp + czp
-					}
-
-					this.ihat = [this.vector[1], -this.vector[0], 0];
-					// plane: ax + by + cz = pconst
-					// plane: z = (pconst - ax - by)/c
-					// deltaz = z - pconst/c <-- plane at x=0, y=0, cancel out things to get below
-					let deltaz = (this.vector[0]*this.vector[0] + this.vector[1]*this.vector[1])/this.vector[2];
-
-					this.jhat = [-this.vector[0], -this.vector[1], deltaz];
-
-					let idist = Math.hypot(this.ihat[0], this.ihat[1], this.ihat[2]); //normalize
-					let jdist = Math.hypot(this.jhat[0], this.jhat[1], this.jhat[2]);
-					for(var i = 0; i < 3; i++){
-						this.ihat[i] /= idist;
-						this.jhat[i] /= jdist;
-					}
-					//console.log(Math.hypot(this.ihat[0], this.ihat[1], this.ihat[2]),Math.hypot(this.jhat[0], this.jhat[1], this.jhat[2])) both should be 1 (proves vectors normalized)
-
-				}
-				orbit(yaw, pitch){ //yaw is side to side, pitch is up and down
-						//yaw doesnt effect Z, so it is basically 2d rotation
-						//pitch.... dagnabbit
-						//given an angle, move x this way and y this way along circle with radius _.
-						let topradius = Math.hypot(this.pos[0]-this.origin[0], this.pos[1]-this.origin[1]);
-
-						this.yaw+=yaw;
-						if(this.yaw >= 2*Math.PI){
-							this.yaw -= 2*Math.PI;
-						} else if(this.yaw < 0){
-							this.yaw += 2*Math.PI;
-						}
-
-						this.pos[0] = topradius * Math.cos(this.yaw);
-						this.pos[1] = topradius * Math.sin(this.yaw);
-
-
-						// end yaw, start pitch
-
-						// 1. yaw back theta so that theta = 0
-						// 2. do what was done for yaw but upwards on plane z and x (since +x axis is the universal 0 angle)
-						// 3. yaw forward theta
-
-						let flatx = this.pos[0]*Math.cos(-this.yaw) - this.pos[1]*Math.sin(-this.yaw); // step 1
-					  if(flatx >= 0){
-					    this.pitch = Math.atan(this.pos[2]/flatx);
-					  } else {
-					    this.pitch = Math.atan(this.pos[2]/flatx)+Math.PI;
-					  }
-						// let flaty = this.pos[1]*Math.cos(-this.yaw) + this.pos[0]*Math.sin(-this.yaw); // (this makes y = 0) the point is now on the xz plane
-						let sideradius = Math.hypot(flatx-this.origin[0], this.pos[2]-this.origin[2]);
-
-						this.pitch+=pitch;
-						if(this.pitch >= 2*Math.PI){
-							this.pitch -= 2*Math.PI;
-						} else if(this.pitch < 0){
-							this.pitch += 2*Math.PI;
-						}
-
-						if(this.pitch > 0.5*Math.PI && this.pitch < Math.PI){
-							this.pitch = 0.5*Math.PI-0.0000001;
-						} else if(this.pitch < 1.5*Math.PI && this.pitch > Math.PI){
-							this.pitch = 1.5*Math.PI-0.0000001;
-						}
-						//console.log(this.pitch);
-
-						let newflatx = sideradius * Math.cos(this.pitch);
-						let newflatz = sideradius * Math.sin(this.pitch);
-
-						this.pos[0] = newflatx*Math.cos(this.yaw);
-						this.pos[1] = newflatx*Math.sin(this.yaw);
-						this.pos[2] = newflatz;
-
-
-
-
-				}
-				slide(x,y){
-
-				}
-				zoom(inout){
-					let vect = [0,0,0];
-					for(var i = 0; i < 3; i++){
-						vect[i] = this.vector[i]/(initcamdist);
-						this.pos[i]+=Math.sqrt(0.004*initcamdist**2)*vect[i]*inout;
-					}
-					initcamdist += Math.sqrt(0.012*initcamdist**2)*inout;
-					refresh();
-					updatefov();
-
-				}
-			}
-
-			class Point{
-				constructor(x, y, z, color){
-					this.pos = [x,y,z];
-					this.slopes = [0,0,0]; //direction vector
-					this.psect = [0,0,0]; //intersect with camera plane
-					this.jscale = 0;
-					this.iscale = 0;
-					this.x = 0;
-					this.y = 0;
-					this.color = color;
-				}
-				project(cam){ // Note: process explanation below may not be 100% accurate
-					// r(t) = {x0, y0, z0} + t{xc-x0, xc-y0, xc-z0} example: x0 + t(xc-x0) = x(t) is x component of the line where x0y0z0 is POINT
-					// plane: a(x-xp) + b(y-yp) + c(z-zp) = 0 where xpypzp is planepoint and abc is vector
-					// plane: ax + by + cz = axp + byp + czp
-					// plane: a(x0 + t(xc-x0)) + b(y0 + t(yc-y0)) + c(z0 + t(zc-z0)) = pconst <-- (axp + byp + czp)
-					// plane: t(a(slopes[0]) + b(slopes[1]) + b(slopes[2])) = pconst -ax0-by0-cz0 <-- slopes[0] is (xc-x0) and x0 is POINT
-					// t = (pconst-ax0-by0-cz0) / (a(slopes[0]) + b(slopes[1]) + c(slopes[2])) YAY!
-					// t = (stepone) / (steptwo) YAY!
-					// 1: find plane point and vector
-					// 2: find plane
-					// 3: find line from projecting point to camera focus
-					// 4: find the intersection between line and plane
-					// 5: find the new basis vectors for the plane and use them to convert to flat
-					let stepone = cam.pconst;
-					let steptwo = 0;
-					for(var i = 0; i < 3; i++){
-						stepone -= cam.vector[i]*this.pos[i];
-						this.slopes[i] = cam.pos[i]-this.pos[i];//cam.pos[i]-this.pos[i];
-						steptwo += cam.vector[i]*this.slopes[i];
-					}
-					let t = stepone/steptwo;
-					let newvector = [0,0,0];
-					for(var i = 0; i < 3; i++){
-						this.psect[i] = this.pos[i] + this.slopes[i]*t;
-						newvector[i] = this.psect[i] - cam.ppoint[i];
-					}
-					//console.log(cam.vector, this.slopes, cam.pconst, this.psect, cam.ppoint, cam.pdistratio);
-
-					this.jscale = newvector[2]/cam.jhat[2]
-					for(var i = 0; i < 3; i++){
-						newvector[i] -= this.jscale*cam.jhat[i]
-					}
-					this.iscale = newvector[0]/cam.ihat[0];
-					//console.log(newvector[0]/cam.ihat[0]); this and
-					//console.log(newvector[1]/cam.ihat[1]); this are the SAME thing!! (proves that dimention was eliminated)
-					//console.log(newvector, cam.jhat, cam.ihat, this.jscale, this.iscale, cam.ppoint, this.psect)
-					this.x = this.iscale*bigness + xcenter;
-					this.y = this.jscale*bigness*Math.sign(cam.vector[2]) + ycenter; //math.sign is a TEMPORARY FIX!!!!
-				}
-				draw(){
-					// let pointsize = 200/Math.hypot(this.slopes[0], this.slopes[1],this.slopes[2]);
-					// if(pointsize >= 6){
-					// 	pointsize = 6;
-					// } //issue: pointsize would change with the perspective disortion
-					ctx.fillStyle = this.color;
-					ctx.beginPath();
-					ctx.arc(this.x, this.y, dotradius, 0, 2 * Math.PI);
-					ctx.fill();
-					//console.log("ok")
-				}
-			}
-
-			class Cube{
-				constructor(x,y,z,val){
-					this.pos = [x,y,z];
-					this.value = val;
-					this.points = [];
-					this.updatepoints(cubesize*0.9);
-					this.popTimer = 0;
-					this.slideTimer = 100;
-					this.slideFrom = [];
-					this.slideTo = [];
-				}
-				updatepoints(radius){
-					this.points = [];
-					for(let i = 0; i<8; i++){ // all points for a cube relative to the center
-						let count = i;
-						let coords = [];
-						for(let j = 0; j<3; j++){
-							coords.push(radius*((count%2)*2-1));
-							count = count>>>1;
-						}
-						// console.log(coords);
-						this.points.push(new Point(this.pos[0]+coords[0], this.pos[1]+coords[1], this.pos[2]+coords[2], "red"));
-					}
-				}
-				draw(){
-					let popTime = 10; //frames
-					if(this.popTimer<popTime){
-						this.popTimer+=1;
-						this.updatepoints(cubesize*(this.popTimer/popTime)*0.9);
-					}
-					let slideTime = 10;
-					if(this.slideTimer<slideTime){
-						this.slideTimer+=1;
-						for(let i = 0; i<3; i++){
-							if(this.slideTo[i]!=this.slideFrom[i]){
-								//console.log("me")
-								this.pos[i] = this.slideFrom[i] + (this.slideTo[i]-this.slideFrom[i])*(this.slideTimer/slideTime);
-							}
-						}
-						this.updatepoints(cubesize*0.9)
-					}
-					let color = colormap.get(this.value);
-
-					for(let dot of this.points){
-						dot.project(camera);
-						dot.color = color;
-						dot.draw();
-					}
-
-					drawface(this.points, [0, 1, 3, 2], color);
-					drawface(this.points, [0, 1, 5, 4], color);
-					drawface(this.points, [2, 3, 7, 6], color);
-					drawface(this.points, [0, 2, 6, 4], color);
-					drawface(this.points, [1, 3, 7, 5], color);
-					drawface(this.points, [4, 5, 7, 6], color);
-
-				}
-			}
-
-			class Grid{
-				constructor(){
-					this.cubes = createCubeArray(gridth);
-					this.values;
-				}
-				newcube(){
-					let emptyIndeces = [];
-					for(let i = 0; i<gridth; i++){
-						for(let j = 0; j<gridth; j++){
-							for(let k = 0; k<gridth; k++){
-								if(this.cubes[i][j][k] == null){
-									emptyIndeces.push([i,j,k])
-								}
-							}
-						}
-					}
-					// console.log(emptyIndeces)
-					if(emptyIndeces.length == 0){
-						console.log("no more spaces!")
-						return;
-					}
-					let whichone = randomRange(0, emptyIndeces.length - 1)
-					let xyz = [0,0,0];
-					for(let i = 0; i<3; i++){
-						xyz[i] = (-(gridth-1)*cubesize) + 2*cubesize*emptyIndeces[whichone][i];
-					}
-					let thecube = new Cube(xyz[0],xyz[1],xyz[2], 2*randomRange(1,2));
-					this.cubes[emptyIndeces[whichone][0]][emptyIndeces[whichone][1]][emptyIndeces[whichone][2]] = thecube;
-				}
-				swipe(xyz, sign){ //0,1,2,  -1, 1
-					const dirs = [[[-1,0,0],[1,0,0]],
-								[[0,-1,0],[0,1,0]],
-								[[0,0,-1],[0,0,1]]];
-					let dir = dirs[xyz][(sign+1)/2];
-					let newarray = createCubeArray(gridth);
-					let changed = false;
-
-					for(let i = 0; i<gridth; i++){
-						for(let j = 0; j<gridth; j++){
-							for(let k = 0; k<gridth; k++){
-								if(this.cubes[i][j][k] != null){
-									let steps = 0;
-									let ray = [];
-									let cap = 0;
-									if(sign==1){
-										cap = gridth - [i,j,k][xyz];
-									} else{
-										cap =  [i,j,k][xyz]+1;
-									}
-									while(steps < cap){ //while in bounds
-										if(this.cubes[i+steps*dir[0]] != null && this.cubes[i+steps*dir[0]][j+steps*dir[1]] != null && this.cubes[i+steps*dir[0]][j+steps*dir[1]][k+steps*dir[2]] != null){
-											ray.push(this.cubes[i+steps*dir[0]][j+steps*dir[1]][k+steps*dir[2]].value);
-										} else{
-											ray.push(null);
-										}
-										steps++;
-									}
-									//console.log(ray);
-									if(ray.includes(null)){
-										let nullcount = 0;
-										changed = true;
-										for(let each of ray){
-											if(each == null){
-												nullcount++;
-											}
-										}
-
-										let newx = i+nullcount*dir[0];
-										let newy = j+nullcount*dir[1];
-										let newz = k+nullcount*dir[2];
-										// console.log(this.cubes[i][j][k].pos)
-										let oldpos = this.cubes[i][j][k].pos;
-										for(let bruh = 0; bruh<3; bruh++){
-											this.cubes[i][j][k].slideTo[bruh] = (-(gridth-1)*cubesize) + 2*cubesize*[newx,newy,newz][bruh];
-										}
-										this.cubes[i][j][k].slideFrom = oldpos;
-										this.cubes[i][j][k].slideTimer = 0;
-										this.cubes[i][j][k].updatepoints(cubesize);
-										// console.log(this.cubes[i][j][k].pos)
-										newarray[newx][newy][newz] = this.cubes[i][j][k];
-									} else {
-										newarray[i][j][k] = this.cubes[i][j][k];
-									}
-								}
-							}
-						}
-					}
-					// console.log(this.cubes);
-					// console.log(newarray);
-
-					this.cubes = newarray;
-					if(changed){
-						this.newcube();
-					}
-					refresh();
-				}
-				draw(){
-					let distances = [];
-					let indeces = [];
-					let dist = 0;
-					for(let i = 0; i<gridth; i++){
-						for(let j = 0; j<gridth; j++){
-							for(let k = 0; k<gridth; k++){
-								if(this.cubes[i][j][k] != null){
-									//console.log(distances.length + "'nth cube")
-									dist = Math.hypot(this.cubes[i][j][k].pos[0] - camera.pos[0], this.cubes[i][j][k].pos[1] - camera.pos[1], this.cubes[i][j][k].pos[2] - camera.pos[2]);
-									if(distances.length == 0){
-										distances.push(dist);
-										indeces.push([i,j,k]);
-										//console.log("firstcube")
-									}else{
-										for(let l = 0; l<distances.length; l++){
-											if(dist>distances[l]){
-												distances.splice(l,0,dist); //if greater. put before the one its less than
-												indeces.splice(l,0,[i,j,k]);
-												//console.log("inserted before something")
-												break;
-											} else if(l+1 == distances.length){ //if its the last term and not more,
-												distances.push(dist);
-												indeces.push([i,j,k]);
-												//console.log("inserted at the end")
-												break;
-
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					//console.log(distances);
-
-					for(let indarry of indeces){
-						this.cubes[indarry[0]][indarry[1]][indarry[2]].draw();
-					}
-				}
-			}
-
-			let grid = new Grid(gridth);
 
 			function drawface(points, indeces, color){
 				ctx.beginPath();
@@ -567,8 +168,11 @@
 				ctx.stroke();
 			}
 
+			//initialize camera
 			let legs = initcamdist/Math.sqrt(3);
 			camera = new Cam(legs,legs,legs);
+
+			//initialize origin
 			let originsize = gridth*2;
 			let originpoints = [];
 			originpoints.push(new Point(originsize,0,0,"red"));
@@ -577,6 +181,13 @@
 			originpoints.push(new Point(-originsize,0,0,"red"));
 			originpoints.push(new Point(0,-originsize,0,"lime"));
 			originpoints.push(new Point(0,0,-originsize,"rgba(120,120,255,1)"));
+
+			// initialize grid
+			let grid = new Grid(gridth);
+			grid.newcube()
+			grid.newcube()
+			console.log(grid.cubes);
+			refresh();
 
 			function draworigin(){
 				for(let dot of originpoints){
@@ -592,52 +203,7 @@
 			}
 
 			function drawplates(){ //convert to the controls GUI thingy
-				for(let dot of originpoints){
-					dot.project(camera);
-					dot.draw();
-					ctx.lineWidth = 2;
-					ctx.strokeStyle = dot.color;
-					ctx.beginPath();
-					ctx.moveTo(xcenter,ycenter);
-					ctx.lineTo(dot.x, dot.y);
-					ctx.stroke();
-				}
-			}
 
-			function drawmesh(mesh){
-				ctx.lineWidth = 1;
-				for(let triangle of mesh){
-					triangle[3].project(camera)
-					for(var i = 1; i < 4; i++){
-						triangle[i].project(camera)
-						if(toggledots){
-							triangle[i].draw()
-						}
-					}
-
-					ctx.fillStyle = triangle[4];
-					if(togglelines){
-						ctx.strokeStyle = triangle[4];
-					} else {
-						ctx.strokeStyle = "rgba(0,0,0,0)";
-					}
-
-					ctx.beginPath();
-					ctx.moveTo(triangle[3].x, triangle[3].y);
-					for(var i = 1; i < 4; i++){
-						ctx.lineTo(triangle[i].x, triangle[i].y);
-					}
-					ctx.fill();
-					ctx.stroke();
-				}
-			}
-
-			function updatefov(){
-				let scalefac = (initcamdist*camdistort/50)/(Math.hypot(camera.vector[0], camera.vector[1], camera.vector[2]));
-				camera.pdist *= scalefac;
-				for(var i = 0; i < 3; i++){
-					camera.pos[i] *= scalefac;
-				}
 			}
 
 			function refresh(){
@@ -646,12 +212,6 @@
 				draworigin();
 				grid.draw();
 			}
-
-			//grid.cubes[1][1][2] = new Cube(cubesize,cubesize,cubesize,8);
-			grid.newcube()
-			grid.newcube()
-			console.log(grid.cubes);
-			refresh();
 
 			function fillscreen(){
 				ctx.fillStyle = canvascolor;
