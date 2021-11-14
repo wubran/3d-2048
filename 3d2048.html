@@ -42,10 +42,20 @@
 
 			const colormap = new Map();
 			colormap.set(69, "rgb(10,10,10,")
+
 			colormap.set(2, "rgb(200,200,200,")
 			colormap.set(4, "rgb(200,200,150,")
 			colormap.set(8, "rgb(255,200,100,")
-
+			colormap.set(16, "rgb(255,160,80,")
+			colormap.set(32, "rgb(255,110,40,")
+			colormap.set(64, "rgb(255,50,20,")
+			colormap.set(128, "rgb(255,235,140,")
+			colormap.set(256, "rgb(255,250,90,")
+			colormap.set(512, "rgb(200,255,100,")
+			colormap.set(1028, "rgb(140,255,80,")
+			colormap.set(2048, "rgb(80,255,140,")
+			colormap.set(4096, "rgb(100,200,255,")
+			colormap.set(8192, "rgb(200,100,255,")
 
 			canvasResize(true);
 
@@ -124,7 +134,7 @@
 			    ctx.stroke();
 			  }
 			}
-			
+
 			function refresh(){
 				fillscreen();
 				camera.update();

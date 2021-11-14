@@ -187,6 +187,8 @@ class Grid{
     let dir = dirs[xyz];
     let newarray = createCubeArray(gridth);
     let axis;
+    let changed = false;
+
     for(let i = 0; i<gridth; i++){
       for(let j = 0; j<gridth; j++){
         let ray = [];
@@ -194,9 +196,16 @@ class Grid{
           axis = [i,j,k];
           ray.push(this.cubes[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]]);
         }
+        let oldvals = [];
+        for(let it of ray){
+          if(it == null){
+            oldvals.push(0);
+          } else{
+            oldvals.push(it.value)
+          }
+        }
         if(sign>0){
           ray.reverse()
-          console.log("negative!")
         }
         let nullcounter = 0;
         for(let i = 0; i<gridth; i++){
@@ -207,7 +216,6 @@ class Grid{
         }
 
         if(ray.length > 1){
-          console.log("start", ray)
           ray = combine(ray);
         }
         while(ray.length<gridth){
@@ -215,7 +223,19 @@ class Grid{
         }
         if(sign>0){
           ray.reverse();
-          console.log("negative!");
+        }
+        let newvals = [];
+        for(let it of ray){
+          if(it == null){
+            newvals.push(0);
+          } else{
+            newvals.push(it.value)
+          }
+        }
+        for(let b = 0; b<gridth; b++){
+          if(oldvals[b] != newvals[b]){
+            changed = true;
+          }
         }
 
         for(let k = 0; k<ray.length; k++){
@@ -235,15 +255,15 @@ class Grid{
             ray[k].slideFrom = ray[k].pos//this.cubes[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]].pos;
             ray[k].slideTimer = 0;
             newarray[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]] = ray[k];
+
           }
         }
       }
     }
-    console.log(newarray)
     this.cubes = newarray;
-    // if(changed){
-       this.newcube();
-    // }
+    if(changed){
+      this.newcube();
+    }
     refresh();
   }
   draw(){
@@ -332,10 +352,8 @@ function drawface(points, indeces, color){
 
 function combine(ray, i=0){
   if(i >= ray.length-1){
-    console.log("done", ray);
     return ray;
   }
-  console.log(i, ray)
   if(ray[i].value == ray[i+1].value){
     ray[i].value *= 2;
     ray.splice(i+1, 1);
