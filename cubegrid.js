@@ -1,7 +1,8 @@
 //this file contains the Cube & Grid classes and the createCubeArray & drawface functions.
 
 class Cube{
-  constructor(x,y,z,val){
+  constructor(x,y,z,val,startindex){
+    this.index = startindex;
     this.pos = [x,y,z];
     this.value = val;
     this.points = [];
@@ -46,31 +47,75 @@ class Cube{
     for(let dot of this.points){
       dot.project(camera);
       dot.color = color;
-      dot.draw();
+      if(toggledots){
+        dot.draw();
+      }
     }
-    if(this.value == 69){
-      color = "rgb(255,255,255,0)";
+
+    // if(this.value == 69){
+    //   color = "rgb(255,255,255,0)";
+    // }
+    //https://en.wikipedia.org/wiki/Back-face_culling
+
+    for(let i = 0; i<3; i++){
+      for(let j = 0; j<2; j++){
+        this.drawface(color, i, j*2-1);
+      }
     }
-    drawface(this.points, [0, 1, 3, 2], color);
-    drawface(this.points, [0, 1, 5, 4], color);
-    drawface(this.points, [2, 3, 7, 6], color);
-    drawface(this.points, [0, 2, 6, 4], color);
-    drawface(this.points, [1, 3, 7, 5], color);
-    drawface(this.points, [4, 5, 7, 6], color);
 
-    if(this.value == 69){return;}
+    if(this.value != 69){
+      let tempcenter = new Point(...this.pos, "red");
+      tempcenter.project(camera);
+      ctx.font = "" + (200*zoomfac) + "px Arial";
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowBlur = 5;
+      ctx.shadowColor = "black";
+      ctx.fillText(this.value, tempcenter.x, tempcenter.y);
+      ctx.shadowBlur = 0;
+    }
 
-    let tempcenter = new Point(...this.pos, "red");
-    tempcenter.project(camera);
-    ctx.font = "" + (200/Math.sqrt(initcamdist)) + "px Arial";
-    ctx.fillStyle = "rgba(255,255,255,0.8)";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.shadowBlur = 5;
-    ctx.shadowColor = "black";
-    ctx.fillText(this.value, tempcenter.x, tempcenter.y);
-    ctx.shadowBlur = 0;
+  }
+  drawface(color, xyz, neg){
 
+    let indeces = cubefaces[(neg+1)/2+2*xyz];
+    let normal = [0,0,0];
+    normal[xyz] = neg;
+    if(this.index[xyz]+neg >= 0 && this.index[xyz]+neg < gridth){ //if within bounds, check if faces are covered
+      let othercube = grid.cubes[this.index[0]+normal[0]] [this.index[1]+normal[1]] [this.index[2]+normal[2]];
+      if(this.index!=69 && othercube != null){
+        if(this.popTimer == 10 && this.slideTimer == 10 && othercube.popTimer == 10 && othercube.slideTimer == 10){
+          if(!grid.explodeList[xyz]){
+            return;
+          }
+        }
+      }
+    }
+    let cull = 0;
+		for(var j = 0; j < 3; j++){ // dot product of cam position and triangle pos
+			cull += (this.points[indeces[0]].pos[j]-camera.pos[j])*normal[j];
+		}
+    if(cull < 0){
+      ctx.beginPath();
+      // ctx.strokeStyle = "rgba(255,255,255,0.4)"
+      ctx.strokeStyle = "#bbada0";;
+       ctx.shadowBlur = gridshadow;
+      if(this.value!=69){
+        ctx.lineWidth = (3*zoomfac)*cubelinewidth;
+      } else{
+        ctx.lineWidth = 2;
+      }
+      ctx.lineJoin = "round";
+      ctx.fillStyle = color;
+      ctx.moveTo(this.points[indeces[3]].x, this.points[indeces[3]].y);
+      for(let index of indeces){
+        ctx.lineTo(this.points[index].x, this.points[index].y);
+      }
+      ctx.fill();
+      ctx.stroke();
+      // ctx.shadowBlur = 0;
+    }
   }
 }
 
@@ -106,81 +151,8 @@ class Grid{
       }
       xyz[i] = urmom*((-(gridth-1)*cubesize) + 2*cubesize*emptyIndeces[whichone][i]);
     }
-    let thecube = new Cube(xyz[0],xyz[1],xyz[2], 2*randomRange(1,2));
+    let thecube = new Cube(xyz[0],xyz[1],xyz[2], 2*randomRange(1,2), emptyIndeces[whichone]);
     this.cubes[emptyIndeces[whichone][0]][emptyIndeces[whichone][1]][emptyIndeces[whichone][2]] = thecube;
-  }
-  swipeold(xyz, sign){ //0,1,2,  -1, 1
-    const dirs = [[[-1,0,0],[1,0,0]],
-          [[0,-1,0],[0,1,0]],
-          [[0,0,-1],[0,0,1]]];
-    let dir = dirs[xyz][(sign+1)/2];
-    let newarray = createCubeArray(gridth);
-    let changed = false;
-
-    for(let i = 0; i<gridth; i++){
-      for(let j = 0; j<gridth; j++){
-        for(let k = 0; k<gridth; k++){
-          if(this.cubes[i][j][k] != null){
-            let steps = 0;
-            let ray = [];
-            let cap = 0;
-            if(sign==1){
-              cap = gridth - [i,j,k][xyz];
-            } else{
-              cap = [i,j,k][xyz]+1;
-            }
-            while(steps < cap){ //while in bounds
-              if(this.cubes[i+steps*dir[0]] != null && this.cubes[i+steps*dir[0]][j+steps*dir[1]] != null && this.cubes[i+steps*dir[0]][j+steps*dir[1]][k+steps*dir[2]] != null){
-                ray.push(this.cubes[i+steps*dir[0]][j+steps*dir[1]][k+steps*dir[2]].value);
-              } else{
-                ray.push(null);
-              }
-              steps++;
-            }
-            //console.log(ray);
-            if(ray.includes(null)){
-              let nullcount = 0;
-              changed = true;
-              for(let each of ray){
-                if(each == null){
-                  nullcount++;
-                }
-              }
-
-              let newx = i+nullcount*dir[0];
-              let newy = j+nullcount*dir[1];
-              let newz = k+nullcount*dir[2];
-              // console.log(this.cubes[i][j][k].pos)
-              let oldpos = this.cubes[i][j][k].pos;
-              for(let bruh = 0; bruh<3; bruh++){
-                let urmom;
-                if(grid.explodeList[bruh]){
-                  urmom = explodeFac;
-                } else{
-                  urmom = 1;
-                }
-                this.cubes[i][j][k].slideTo[bruh] = urmom*((-(gridth-1)*cubesize) + 2*cubesize*[newx,newy,newz][bruh]);
-              }
-              this.cubes[i][j][k].slideFrom = oldpos;
-              this.cubes[i][j][k].slideTimer = 0;
-              //this.cubes[i][j][k].updatepoints(cubesize);
-              // console.log(this.cubes[i][j][k].pos)
-              newarray[newx][newy][newz] = this.cubes[i][j][k];
-            } else {
-              newarray[i][j][k] = this.cubes[i][j][k];
-            }
-          }
-        }
-      }
-    }
-    // console.log(this.cubes);
-    // console.log(newarray);
-
-    this.cubes = newarray;
-    if(changed){
-      this.newcube();
-    }
-    refresh();
   }
   swipe(xyz, sign){ //0,1,2,  -1, 1
     const dirs = [[2,0,1],[1,2,0],[0,1,2]];
@@ -240,6 +212,7 @@ class Grid{
 
         for(let k = 0; k<ray.length; k++){
           if(ray[k] != null){
+            ray[k].slideTimer = 10;
             axis = [i,j,k];
             let urmom;
             for(let bruh = 0; bruh<3; bruh++){
@@ -249,11 +222,15 @@ class Grid{
                 urmom = 1;
               }
               ray[k].slideTo[bruh] = urmom*((-(gridth-1)*cubesize) + 2*cubesize*[axis[dir[0]],axis[dir[1]],axis[dir[2]]][bruh]);
-
+              if(ray[k].slideTo[bruh] != ray[k].pos[bruh]){
+                ray[k].slideTimer = 0;
+                changed = true;
+              }
             }
 
             ray[k].slideFrom = ray[k].pos//this.cubes[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]].pos;
-            ray[k].slideTimer = 0;
+
+            ray[k].index = [axis[dir[0]], axis[dir[1]], axis[dir[2]]];
             newarray[axis[dir[0]]][axis[dir[1]]][axis[dir[2]]] = ray[k];
 
           }
@@ -338,18 +315,6 @@ function createCubeArray(sidelength){
   return arry;
 }
 
-function drawface(points, indeces, color){
-  ctx.beginPath();
-  ctx.strokeStyle = "rgba(255,255,255,0.4)";
-  ctx.lineWidth = 2;
-  ctx.fillStyle = color;
-  ctx.moveTo(points[indeces[3]].x, points[indeces[3]].y);
-  for(let index of indeces){
-    ctx.lineTo(points[index].x, points[index].y);
-  }
-  ctx.fill();
-  ctx.stroke();
-}
 
 function combine(ray, i=0){
   if(i >= ray.length-1){

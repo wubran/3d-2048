@@ -1,16 +1,94 @@
 <!DOCTYPE html>
-<html style="padding:0;margin:0;">
+<html>
+<head>
+	<title>3d 2048</title>
+	<link rel="preload" href="fonts/ClearSans-Regular.woff" as="font" type="font/woff">
+	<link rel="preload" href="fonts/ClearSans-Bold.woff" as="font" type="font/woff">
+	<link href="fonts/clear-sans.css" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'">
+	<noscript><link href="fonts/clear-sans.css?ff=1&wps=true" rel=stylesheet></noscript>
+
+</head>
 <style>
-/* p {
-  border: 2px solid powderblue;
-  padding: 30px;
-} */
+html {
+	margin:0;
+	height: 190%;
+	background: #eee4da59;
+	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+}
+body {
+	margin: 0px;
+	margin-bottom: 80px;
+	padding-bottom: 100px;
+	height: auto;
+}
+.mainColumn{
+	box-sizing: border-box;
+	border:0px solid #FF0000;
+	border-radius:6px;
+	margin:0px auto;
+	margin-top: 30px;
+	padding: 0px;
+	position:relative;
+	width: 80%;
+	max-width: 500px;
+	height: 100%;
+	/* background: #bbada0; */
+}
+.inColumn{
+	display: block;
+	box-sizing: border-box;
+	border:0px solid #bbada0;
+	margin: 0px;
+	position:relative;
+	width: 100%;
+	max-width: 500px;
+	height:112.8px;
+}
+h1.title{
+	margin:0px;
+	color: #776e65;
+	font-weight: bold;
+	font-size: 80px;
+	/* float: left; */
+}
+canvas {
+	box-sizing: border-box;
+	border:15px solid #bbada0;
+	border-radius:6px;
+	margin: 0px;
+	margin-top: 40px;
+	position:relative;
+	width: 100%;
+	max-width: 500px;
+	background: #eee4da;
+	/* background: rgb(205,193,180);  */
+}
+p {
+	margin: 0;
+}
+
 </style>
-	<body style="padding:0;margin:0;overflow: hidden;color:#faf8ef;">
-		<!-- <div>
-			<p>ur mom haha</p>
-		</div> -->
-		<canvas id="3d" style="float:center;"></canvas>
+	<body style="background-color:#faf8ef;">
+		<div class="mainColumn">
+			<div class="inColumn">
+				<h1 class = "title">2048 3D</h1>
+			</div>
+			<div class="inColumn" style="height:44.8px;">
+				<p>by Brian Wu</p>
+				<p>bruhhhh</p>
+				<p>lmaoooooo</p>
+			</div>
+			<div>
+
+			</div>
+			<canvas id="3d"></canvas>
+			<div>
+
+			</div>
+			<div>
+
+			</div>
+		</div>
 		<script type="text/javascript" src="slider.js"></script>
 		<script type="text/javascript" src="cubegrid.js"></script>
 		<script type="text/javascript" src="campoint3d.js"></script>

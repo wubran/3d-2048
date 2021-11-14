@@ -94,7 +94,7 @@ class Cam{
       if(this.pitch > 0.5*Math.PI && this.pitch < Math.PI){
         this.pitch = 0.5*Math.PI-0.0000001;
       } else if(this.pitch < 1.5*Math.PI && this.pitch > Math.PI){
-        this.pitch = 1.5*Math.PI-0.0000001;
+        this.pitch = 1.5*Math.PI+0.0000001;
       }
       //console.log(this.pitch);
 
@@ -121,6 +121,7 @@ class Cam{
     initcamdist += Math.sqrt(0.012*initcamdist**2)*inout;
     refresh();
     updatefov();
+    zoomfac = 1/Math.sqrt(initcamdist);
 
   }
 }

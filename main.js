@@ -9,44 +9,71 @@
   var mouseY = 0;
   var startx = 0;
   var starty = 0;
+  var clickstart = [0,0];
+  var mousemoved = false;
 
   var pause = true;
+  var sliding = false;
+
   var xcenter = canvas.width/2;
   var ycenter = canvas.height/2;
   const planetosize = 20; //increases distance of plane away from camera AND scales everything down
   var bigness = 15/planetosize; // overall scale factor
+
   var initcamdist = 50; // fov effects (becomes orthographic as approaches infinity)
+  var zoomfac = 1/Math.sqrt(initcamdist);
   var camdistort = 50; // fov effects (becomes orthographic as approaches infinity)
-  var flammability = 0.01;
-  var sliding = false;
-  var clickstart = [0,0];
-  var dotradius = 3;
+
+  var dotradius = 6;
   var toggledots = false;
+  var cubelinewidth = 16;
   var togglelines = false;
+
   const gridth = 4;
-  var opacity = 0.7;
-  var revolvespeed = 0.01;
-  var gapness = 0.8;
+  var gapness = 1;
   const cubesize = 1.5;
   var explodeFac = 3;
-  var mousemoved = false;
+  var revolvespeed = 0.01;
 
+  var gridshadow = 0;
+  var opacity = 1;
   const colormap = new Map();
-  colormap.set(69, "rgb(10,10,10,")
+  colormap.set(69, "rgb(215,203,190,")
 
-  colormap.set(2, "rgb(200,200,200,")
-  colormap.set(4, "rgb(200,200,150,")
-  colormap.set(8, "rgb(255,200,100,")
-  colormap.set(16, "rgb(255,160,80,")
-  colormap.set(32, "rgb(255,110,40,")
-  colormap.set(64, "rgb(255,50,20,")
-  colormap.set(128, "rgb(255,235,140,")
-  colormap.set(256, "rgb(255,250,90,")
-  colormap.set(512, "rgb(200,255,100,")
-  colormap.set(1024, "rgb(140,255,80,")
-  colormap.set(2048, "rgb(80,255,140,")
+  // colormap.set(2, "rgb(200,200,200,")
+  // colormap.set(4, "rgb(200,200,150,")
+  // colormap.set(8, "rgb(255,200,100,")
+  // colormap.set(16, "rgb(255,160,80,")
+  // colormap.set(32, "rgb(255,110,40,")
+  // colormap.set(64, "rgb(255,50,20,")
+  // colormap.set(128, "rgb(255,235,140,")
+  // colormap.set(256, "rgb(255,250,90,")
+  // colormap.set(512, "rgb(200,255,100,")
+  // colormap.set(1024, "rgb(140,255,80,")
+  // colormap.set(2048, "rgb(80,255,140,")
+  // colormap.set(4096, "rgb(100,200,255,")
+  // colormap.set(8192, "rgb(200,100,255,")
+
+  colormap.set(2, "rgb(238, 228, 218,")
+  colormap.set(4, "rgb(237, 224, 200,")
+  colormap.set(8, "rgb(242, 177, 121,")
+  colormap.set(16, "rgb(245, 149, 99,")
+  colormap.set(32, "rgb(246, 124, 95,")
+  colormap.set(64, "rgb(246, 94, 59,")
+  colormap.set(128, "rgb(237, 207, 114,")
+  colormap.set(256, "rgb(237, 204, 97,")
+  colormap.set(512, "rgb(237, 200, 80,")
+  colormap.set(1024, "rgb(237, 197, 63,")
+  colormap.set(2048, "rgb(237, 194, 46,")
   colormap.set(4096, "rgb(100,200,255,")
   colormap.set(8192, "rgb(200,100,255,")
+
+  const cubefaces = [ [0, 2, 6, 4], // negative X
+                      [1, 3, 7, 5], // positive X
+                      [0, 1, 5, 4], // negative Y
+                      [2, 3, 7, 6], // positive Y
+                      [0, 1, 3, 2], // bottom //HAVING ONLY THIS ACTUALLY LOOKS PRETTY COOL
+                      [4, 5, 7, 6]] // top
 
   canvasResize(true);
 
@@ -98,9 +125,9 @@
   originpoints.push(new Point(0,-originsize,0,"lime"));
   originpoints.push(new Point(0,0,-originsize,"rgba(120,120,255,1)"));
 
-  outline = new Cube(0,0,0,69);
+  outline = new Cube(0,0,0,69, 69);
   outline.popTimer = 10;
-  outline.updatepoints(gridth*cubesize);
+  outline.updatepoints((gridth+0.3)*cubesize);
 
   let indicator;
 
@@ -127,7 +154,8 @@
   }
 
   function refresh(){
-    fillscreen();
+    //fillscreen();
+    ctx.clearRect(0,0,canvas.width, canvas.height)
     camera.update();
     outline.draw();
     draworigin();
@@ -223,6 +251,8 @@
           indicator.draw(originsize);
         }
       }
+    }
+    if(butt>-1){
       draworigin();
     }
 

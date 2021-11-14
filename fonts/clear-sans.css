@@ -1,0 +1,32 @@
+@font-face {
+  font-family: "Clear Sans";
+  src: url("ClearSans-Light.eot");
+  src: url("ClearSans-Light.eot?#iefix") format("embedded-opentype"),
+    url("ClearSans-Light.svg#clear_sans_lightregular") format("svg"),
+    url("ClearSans-Light.woff") format("woff");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Clear Sans";
+  src: url("ClearSans-Regular.eot");
+  src: url("ClearSans-Regular.eot?#iefix") format("embedded-opentype"),
+    url("ClearSans-Regular.svg#clear_sansregular") format("svg"),
+    url("ClearSans-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Clear Sans";
+  src: url("ClearSans-Bold.eot");
+  src: url("ClearSans-Bold.eot?#iefix") format("embedded-opentype"),
+    url("ClearSans-Bold.svg#clear_sansbold") format("svg"),
+    url("ClearSans-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

@@ -6,6 +6,14 @@
 			canvas.addEventListener("wheel", scroll)
 			canvas.addEventListener('mouseleave', onMouseLeave);
 			canvas.addEventListener('mousemove', onMouseMove);
+
+	    canvas.addEventListener("wheel", preventDefaults, false)
+
+			function preventDefaults (e) {
+			  e.preventDefault()
+			  e.stopPropagation()
+			}
+
 			document.addEventListener('keydown', (event) => {
 			  const keyName = event.key;
 			  switch(keyName){
@@ -148,8 +156,8 @@
 
       window.onresize = canvasResize;
       function canvasResize(initialize) {
-        canvas.width  = 4*window.innerWidth/4;
-        canvas.height = 4*window.innerHeight/4;//window.innerHeight;
+        canvas.width  = 500;
+        canvas.height = canvas.width;
         ctx.fillStyle = '#13171A';
         //ctx.fillStyle = canvascolor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
