@@ -341,6 +341,7 @@ function createCubeArray(sidelength){
 function drawface(points, indeces, color){
   ctx.beginPath();
   ctx.strokeStyle = "rgba(255,255,255,0.4)";
+  ctx.lineWidth = 2;
   ctx.fillStyle = color;
   ctx.moveTo(points[indeces[3]].x, points[indeces[3]].y);
   for(let index of indeces){

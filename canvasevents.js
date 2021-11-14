@@ -1,4 +1,4 @@
-      canvas = document.getElementById('screen');
+      canvas = document.getElementById('3d');
 			canvas.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
 
 			canvas.addEventListener('mousedown', onClick);
@@ -85,8 +85,8 @@
 					//click = true;
 					butt = event.button;
           if(event.button == 0){ //left click begin
-            startx = event.pageX;
-            starty = event.pageY;
+            startx = event.offsetX;
+            starty = event.offsetY;
           }
 				}
 			}
@@ -111,14 +111,15 @@
 			}
 
 			function onMouseMove(event){
-			  mouseX = event.pageX;
-			  mouseY = event.pageY;
+        //mousemoved = true;
+			  mouseX = event.offsetX;
+			  mouseY = event.offsetY;
 				revolveSpeedSlider.mouseMove(mouseX, mouseY)
 				camdistSlider.mouseMove(mouseX, mouseY)
 				if(butt == 2){
 					let diffx = mouseX-clickstart[0];
 					let diffy = mouseY-clickstart[1];
-					camera.orbit(-20*diffx/(canvas.width), 20*diffy/(canvas.width));
+					camera.orbit(-20*diffx/(1000), 20*diffy/(1000));
 
 				}else if(sliding){
 					updatefov();
@@ -147,8 +148,8 @@
 
       window.onresize = canvasResize;
       function canvasResize(initialize) {
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width  = 4*window.innerWidth/4;
+        canvas.height = 4*window.innerHeight/4;//window.innerHeight;
         ctx.fillStyle = '#13171A';
         //ctx.fillStyle = canvascolor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
