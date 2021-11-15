@@ -66,23 +66,30 @@ class Cube{
     if(this.value != 69){
       let tempcenter = new Point(...this.pos, "red");
       tempcenter.project(camera);
-      ctx.font = "" + (4*200*zoomfac)/gridth + "px Arial";
-      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.font = "bold " + (4*200*zoomfac)/gridth + "px Clear Sans";
+      if(this.value >= 8){
+        ctx.fillStyle = "rgb(249,246,242)"; //rgb(119,110,101)
+        ctx.shadowColor = "black";
+      } else {
+        ctx.fillStyle = "rgb(119,110,101)";
+        ctx.shadowColor = "white";
+      }
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.shadowBlur = 5;
-      ctx.shadowColor = "black";
+      ctx.shadowBlur = numberShadow;
       ctx.fillText(this.value, tempcenter.x, tempcenter.y);
       ctx.shadowBlur = 0;
     }
 
   }
   drawface(color, xyz, neg){
-
+    if(!facesToDraw[(neg+1)/2+2*xyz]){
+      return;
+    }
     let indeces = cubefaces[(neg+1)/2+2*xyz];
     let normal = [0,0,0];
     normal[xyz] = neg;
-    if(this.index[xyz]+neg >= 0 && this.index[xyz]+neg < gridth){ //if within bounds, check if faces are covered
+    if(obfuscation&&this.index[xyz]+neg >= 0 && this.index[xyz]+neg < gridth){ //if within bounds, check if faces are covered
       let othercube = grid.cubes[this.index[0]+normal[0]] [this.index[1]+normal[1]] [this.index[2]+normal[2]];
       if(this.index!=69 && othercube != null){
         if(this.popTimer == 10 && this.slideTimer == 10 && othercube.popTimer == 10 && othercube.slideTimer == 10){
@@ -93,9 +100,13 @@ class Cube{
       }
     }
     let cull = 0;
-		for(var j = 0; j < 3; j++){ // dot product of cam position and triangle pos
-			cull += (this.points[indeces[0]].pos[j]-camera.pos[j])*normal[j];
-		}
+    if(toggleCulling){
+  		for(var j = 0; j < 3; j++){ // dot product of cam position and triangle pos
+  			cull += (this.points[indeces[0]].pos[j]-camera.pos[j])*normal[j];
+  		}
+    } else{
+      cull = -1;
+    }
     if(cull < 0){
       ctx.beginPath();
       // ctx.strokeStyle = "rgba(255,255,255,0.4)"

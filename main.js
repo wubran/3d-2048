@@ -35,7 +35,22 @@
   var cubelinewidth = (4*16)/gridth;
   var togglelines = false;
 
+  // var facesToDraw = [false, false, false, false, true, false]; //settings for bottom plates only
+  // var toggleCulling = false;
+  // var obfuscation = false;
+
+  var facesToDraw = [true, true, true, true, true, true]; //xxyyzz
+  var toggleCulling = true;
+  var obfuscation = true;
+  const cubefaces = [ [0, 2, 6, 4], // negative X
+                      [1, 3, 7, 5], // positive X
+                      [0, 1, 5, 4], // negative Y
+                      [2, 3, 7, 6], // positive Y
+                      [0, 1, 3, 2], // bottom //HAVING ONLY THIS ACTUALLY LOOKS PRETTY COOL
+                      [4, 5, 7, 6]] // top
+
   var gridshadow = 0;
+  var numberShadow = 5;
   var opacity = 1;
   const colormap = new Map();
   colormap.set(69, "rgb(215,203,190,")
@@ -67,13 +82,6 @@
   colormap.set(2048, "rgb(237, 194, 46,")
   colormap.set(4096, "rgb(100,200,255,")
   colormap.set(8192, "rgb(200,100,255,")
-
-  const cubefaces = [ [0, 2, 6, 4], // negative X
-                      [1, 3, 7, 5], // positive X
-                      [0, 1, 5, 4], // negative Y
-                      [2, 3, 7, 6], // positive Y
-                      [0, 1, 3, 2], // bottom //HAVING ONLY THIS ACTUALLY LOOKS PRETTY COOL
-                      [4, 5, 7, 6]] // top
 
   canvasResize(true);
 
