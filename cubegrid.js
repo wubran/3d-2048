@@ -66,7 +66,7 @@ class Cube{
     if(this.value != 69){
       let tempcenter = new Point(...this.pos, "red");
       tempcenter.project(camera);
-      ctx.font = "" + (200*zoomfac) + "px Arial";
+      ctx.font = "" + (4*200*zoomfac)/gridth + "px Arial";
       ctx.fillStyle = "rgba(255,255,255,0.8)";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";

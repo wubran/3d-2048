@@ -24,16 +24,16 @@
   var zoomfac = 1/Math.sqrt(initcamdist);
   var camdistort = 50; // fov effects (becomes orthographic as approaches infinity)
 
-  var dotradius = 6;
-  var toggledots = false;
-  var cubelinewidth = 16;
-  var togglelines = false;
-
-  const gridth = 4;
+  var gridth = 4;
   var gapness = 1;
-  const cubesize = 1.5;
+  var cubesize = (4*1.5)/gridth;
   var explodeFac = 3;
   var revolvespeed = 0.01;
+
+  var dotradius = 6;
+  var toggledots = false;
+  var cubelinewidth = (4*16)/gridth;
+  var togglelines = false;
 
   var gridshadow = 0;
   var opacity = 1;
@@ -163,7 +163,7 @@
   }
 
   function pickdirection(){
-    if(Math.hypot(mouseX-startx,mouseY-starty)/(canvas.width+canvas.height) > .01){
+    if(Math.hypot(mouseX-startx,mouseY-starty) > 20){
       let mouseangle = angle((mouseY-starty),(mouseX-startx));
       let originangles = [];
       for(let i = 0; i<6; i++){
@@ -231,7 +231,7 @@
     }
     refresh();
     if(startx!=0){
-      if(startx!=mouseX && starty!=mouseY){
+      if(startx!=mouseX || starty!=mouseY){
         ctx.beginPath();
         if(indicator!=null){
           ctx.strokeStyle = indicator.color;
@@ -240,6 +240,7 @@
         }
         ctx.lineWidth = 5;
         ctx.shadowBlur = 5;
+        ctx.lineCap = "round"
         ctx.shadowColor = "black";
         ctx.moveTo(startx,starty);
         ctx.lineTo(mouseX,mouseY);

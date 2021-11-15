@@ -1,5 +1,5 @@
       canvas = document.getElementById('3d');
-			canvas.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
+			document.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
 
 			canvas.addEventListener('mousedown', onClick);
 			canvas.addEventListener("mouseup", onRelease);
@@ -8,6 +8,8 @@
 			canvas.addEventListener('mousemove', onMouseMove);
 
 	    canvas.addEventListener("wheel", preventDefaults, false)
+      //document.addEventListener("keydown", preventDefaults)
+
 
 			function preventDefaults (e) {
 			  e.preventDefault()
@@ -16,6 +18,9 @@
 
 			document.addEventListener('keydown', (event) => {
 			  const keyName = event.key;
+        if(keyName.includes("Arrow") || keyName == " "){
+          event.preventDefault();
+        }
 			  switch(keyName){
 			    case 'Control':
 			      return;
@@ -148,6 +153,8 @@
 
 			function onMouseLeave(event){
 				butt = -1;
+        startx = 0;
+        starty = 0;
 			}
 
 			function scroll(event){
@@ -156,7 +163,7 @@
 
       window.onresize = canvasResize;
       function canvasResize(initialize) {
-        canvas.width  = 500;
+        canvas.width  = 500-30;
         canvas.height = canvas.width;
         ctx.fillStyle = '#13171A';
         //ctx.fillStyle = canvascolor;
