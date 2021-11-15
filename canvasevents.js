@@ -91,8 +91,6 @@
 
 			function onClick(event){
 				if(canvas.style.cursor == "pointer"){
-					revolveSpeedSlider.clickEvent(event.clientX, event.clientY)
-					camdistSlider.clickEvent(event.clientX, event.clientY)
 					sliding = true;
 				}else{
 					//click = true;
@@ -107,8 +105,6 @@
 			function onRelease(event){
 				butt = -1;
 				sliding = false;
-				revolveSpeedSlider.releaseEvent()
-				camdistSlider.releaseEvent()
         if(event.button == 0){ //left click end
           let index = pickdirection();
           if(index!=-1){
@@ -127,8 +123,6 @@
         //mousemoved = true;
 			  mouseX = event.offsetX;
 			  mouseY = event.offsetY;
-				revolveSpeedSlider.mouseMove(mouseX, mouseY)
-				camdistSlider.mouseMove(mouseX, mouseY)
 				if(butt == 2){
 					let diffx = mouseX-clickstart[0];
 					let diffy = mouseY-clickstart[1];
@@ -170,11 +164,6 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         xcenter = canvas.width/2;
         ycenter = canvas.height/2;
-        //revolveSpeedSlider.
-        //camdistSlider.
-        revolveSpeedSlider = new Slider("revolve speed", 0.5, 0, 1, canvas.width/10, setRevolveSpeed, canvas.width/5, getRevolveSpeed, 2)
-        camdistSlider = new Slider("perspective distortion", 100/camdistort, 100/100000, 100/10, canvas.width/10, setCamdist, canvas.width/5, getCamdist, 2)
-
         if(initialize != true){
           refresh();
           //console.log("boop")

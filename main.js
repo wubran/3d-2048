@@ -85,13 +85,22 @@
 
   canvasResize(true);
 
-  function getRevolveSpeed(){return revolvespeed;}
-  function setRevolveSpeed(setTo){revolvespeed = setTo;}
-  var revolveSpeedSlider = new Slider("revolve speed", 0.01, 0, 0.05, canvas.width/10, setRevolveSpeed, canvas.width/5, getRevolveSpeed, 3)
-  function getCamdist(){return 100/camdistort;}
-  function setCamdist(setTo){camdistort = 100/setTo;}
-  var camdistSlider = new Slider("perspective distortion", 100/camdistort, 100/100000, 100/10, canvas.width/10, setCamdist, canvas.width/5, getCamdist, 2)
-  //(name, value, minimum, maximum, containerWidth, updateFunc, container, checkUpdateFunc, roundPlaces)
+  var slider1 = document.getElementById("slider1");
+  var output1 = document.getElementById("output1");
+  output1.innerHTML = slider1.value; // Display the default slider value
+
+  var slider2 = document.getElementById("slider2");
+  var output2 = document.getElementById("output2");
+  output2.innerHTML = slider2.value; // Display the default slider value
+
+
+  // Update the current slider value (each time you drag the slider handle)
+  slider1.oninput = function() {
+    output1.innerHTML = this.value;
+  }
+  slider2.oninput = function() {
+    output2.innerHTML = this.value;
+  }
 
   function randomRange(min, max){ //inclusive, inclusive
     let interval = 1 + max-min; //plus 1 because rounding shenanigans
@@ -195,9 +204,6 @@
     ctx.fillStyle = canvascolor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.textAlign = "left"
-
-    // revolveSpeedSlider.draw(4*canvas.width/20, 14*canvas.height/40);
-    // camdistSlider.draw(4*canvas.width/20, 19*canvas.height/40);
 
     ctx.font = canvas.width / 40 + "px Arial";
     ctx.fillStyle = blurple;

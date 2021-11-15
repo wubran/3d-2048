@@ -68,7 +68,44 @@ p {
 	font-size: 18px;
 	margin: 0;
 }
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
 
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: rgb(187,173,160); /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: rgb(143,122,102); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: rgb(143,122,102); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
 </style>
 	<body>
 		<div class="mainColumn">
@@ -82,18 +119,23 @@ p {
 				<!-- <p style = "font-size:6px">Which was also based on <strong>Ur Mom.</strong></p>
 				<p style = "font-size:3px">Words words words words <strong>haha</strong></p> -->
 			</div>
-			<div>
-
-			</div>
 			<canvas id="3d"></canvas>
-			<div>
-
+			<div class = "inColumn">
+				<div class="slidecontainer">
+					<p>Random Slider!</p>
+				  <input type="range" min="1" max="100" value="21" class="slider" id="slider1">
+					<p id="output1"></p>
+				</div>
+				<div class="slidecontainer">
+					<p>Another Random Slider!</p>
+					<input type="range" min="1" max="100" value="69" class="slider" id="slider2">
+					<p id="output2"></p>
+				</div>
 			</div>
 			<div>
 
 			</div>
 		</div>
-		<script type="text/javascript" src="slider.js"></script>
 		<script type="text/javascript" src="cubegrid.js"></script>
 		<script type="text/javascript" src="campoint3d.js"></script>
 		<script type="text/javascript" src="canvasevents.js"></script>
