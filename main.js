@@ -36,11 +36,7 @@
   var indicator;
   var grid;
 
-  let originleft = 0;
-  let targetleft = -100;
-  let butttarget = -70;
-  let originwidth = 470;
-  let targetwidth = 670;
+  let targetleft = -80;
 
   var dotradius = 6;
   var toggledots = false;
@@ -240,13 +236,15 @@
       }
     }
     if(mouseEnterTimer>0){
+      let currentpos = targetleft-(targetleft)*(mouseEnterTimer-1)/10;
+      let currentsize = 470-currentpos*2;
+      let curremtbutt = currentpos*0.7;
+      canvas.setAttribute("style", "left: " + currentpos
+                          + "px; top: "+currentpos+"px;");
+      canvas.setAttribute("width", currentsize + "px");
+      canvas.setAttribute("height", currentsize + "px");
 
-      canvas.setAttribute("style", "left: " + (targetleft+(originleft-targetleft)*(mouseEnterTimer-1)/10)
-                          + "px; top: "+(targetleft+(originleft-targetleft)*(mouseEnterTimer-1)/10)+"px;");
-      canvas.setAttribute("width", (targetwidth+(originwidth-targetwidth)*(mouseEnterTimer-1)/10) + "px");
-      canvas.setAttribute("height", (targetwidth+(originwidth-targetwidth)*(mouseEnterTimer-1)/10) + "px");
-
-      newGameButt.setAttribute("style", "float:right; top: "+(butttarget+(originleft-butttarget)*(mouseEnterTimer-1)/10)+"px;");
+      newGameButt.setAttribute("style", "float:right; top: "+curremtbutt+"px;");
 
       xcenter = canvas.width/2;
       ycenter = canvas.height/2;
@@ -254,12 +252,15 @@
       mouseEnterTimer--;
     } else if(mouseEnterTimer<0){
 
-      canvas.setAttribute("style", "left: " + (originleft-(targetleft-originleft)*(mouseEnterTimer+1)/10)
-                          + "px; top: "+(originleft-(targetleft-originleft)*(mouseEnterTimer+1)/10)+"px;");
-      canvas.setAttribute("width", (originwidth-(targetwidth-originwidth)*(mouseEnterTimer+1)/10) + "px");
-      canvas.setAttribute("height", (originwidth-(targetwidth-originwidth)*(mouseEnterTimer+1)/10) + "px");
+      let currentpos = (-targetleft)*(mouseEnterTimer+1)/10;
+      let currentsize = 470-currentpos*2;
+      let curremtbutt = currentpos*0.7;
+      canvas.setAttribute("style", "left: " + currentpos
+                          + "px; top: "+currentpos+"px;");
+      canvas.setAttribute("width", currentsize + "px");
+      canvas.setAttribute("height", currentsize + "px");
 
-      newGameButt.setAttribute("style", "float:right; top: "+(originleft-(butttarget-originleft)*(mouseEnterTimer+1)/10)+"px;");
+      newGameButt.setAttribute("style", "float:right; top: "+curremtbutt+"px;");
 
       xcenter = canvas.width/2;
       ycenter = canvas.height/2;

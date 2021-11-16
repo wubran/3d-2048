@@ -26,6 +26,8 @@
         output1.innerHTML = this.value;
         let pos = 485-this.value * 485/(this.max-this.min);
         output1.setAttribute("style", "margin-right: " + pos + "px");
+
+        targetleft = -this.value;
       }
 
       slider2.oninput = function() {

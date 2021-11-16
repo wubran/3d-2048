@@ -115,9 +115,10 @@ hr{
 button{
 	background-color: rgb(143,122,102);
 	border-radius: 3px;
+	border-style:solid;
+	border-width: 0px;
 	padding: 0 20px;
 	height: 40px;
-	/* line-height: 42px; */
 	cursor: pointer;
 	border-color: rgb(143,122,102);
 	font:inherit;
@@ -126,10 +127,33 @@ button{
 	font-weight: bold;
 	box-shadow: none;
 	position:relative;
+	margin:0px;
 }
 button:hover {
   background-color: rgb(123,102,82);
   color: white;
+}
+.tabL {
+	margin-left: 30px;
+}
+.tabR {
+	margin-right: 30px;
+}
+.darker{
+	background-color: rgb(232,229,219);
+}
+.container{
+	display:flex;
+	width:100%;
+}
+.typicalFlex{
+	flex-grow: 1;
+}
+.subtitle{
+	margin: 15px auto;
+	font-size: 20px;
+	text-align: center;
+	font-weight: bold;
 }
 </style>
 	<body>
@@ -157,9 +181,34 @@ button:hover {
 			<canvas id="3d" ></canvas>
 
 			<div class = "inColumn">
+				<p class="subtitle">3D 2048 Controls:</p>
+				<div class="container">
+					<div class = "typicalFlex">
+						<p class="tabL darker"><strong>• Rotate: </strong></p>
+						<p class="tabL"><strong>• Zoom: </strong></p>
+						<p class="tabL darker"><strong>• Make Move: </strong></p>
+						<p class="tabL"><strong>• Toggle Spinning: </strong></p>
+						<p class="tabL darker"><strong>• Speed-Move: </strong></p>
+						<p class="tabL"><strong>• Explode: </strong></p>
+						<p class="tabL darker"><strong>• Un-Explode: </strong></p>
+
+					</div>
+					<div class = "typicalFlex">
+						<p class="tabR darker">right-mouse drag</p>
+						<p class="tabR">scroll wheel</p>
+						<p class="tabR darker">left-mouse drag</p>
+						<p class="tabR">spacebar</p>
+						<p class="tabR darker">QW AS ZX (x, y, z axis)</p>
+						<p class="tabR">arrow keys</p>
+						<p class="tabR darker">down arrow key</p>
+
+					</div>
+				</div>
+				<p class="subtitle">Sliders!</p>
+				<hr>
 				<div class="slidecontainer">
-					<p>Random Slider!</p>
-				  <input type="range" min="1" max="100" value="21" class="slider" id="slider1">
+					<p>Window Expansion</p>
+				  <input type="range" min="0" max="150" value="80" class="slider" id="slider1">
 					<p class = sliderIndicator id="output1"></p>
 				</div>
 				<hr>
