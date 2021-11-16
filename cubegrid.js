@@ -66,7 +66,7 @@ class Cube{
     if(this.value != 69){
       let tempcenter = new Point(...this.pos, "red");
       tempcenter.project(camera);
-      ctx.font = "bold " + (4*200*zoomfac)/gridth + "px Clear Sans";
+      ctx.font = "bold " + (0.5+0.5/(""+this.value).length)*(4*200*zoomfac)/gridth + "px Clear Sans";
       if(this.value >= 8){
         ctx.fillStyle = "rgb(249,246,242)"; //rgb(119,110,101)
         ctx.shadowColor = "black";

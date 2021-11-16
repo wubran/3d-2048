@@ -1,14 +1,41 @@
       canvas = document.getElementById('3d');
+
 			document.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
 
 			canvas.addEventListener('mousedown', onClick);
 			canvas.addEventListener("mouseup", onRelease);
 			canvas.addEventListener("wheel", scroll)
+      canvas.addEventListener('mouseenter', onMouseEnter);
 			canvas.addEventListener('mouseleave', onMouseLeave);
 			canvas.addEventListener('mousemove', onMouseMove);
 
 	    canvas.addEventListener("wheel", preventDefaults, false)
       //document.addEventListener("keydown", preventDefaults)
+
+      var slider1 = document.getElementById("slider1");
+      var output1 = document.getElementById("output1");
+      output1.innerHTML = slider1.value; // Display the default slider value
+
+      var slider2 = document.getElementById("slider2");
+      var output2 = document.getElementById("output2");
+      output2.innerHTML = slider2.value; // Display the default slider value
+
+
+      // Update the current slider value (each time you drag the slider handle)
+      slider1.oninput = function() {
+        output1.innerHTML = this.value;
+        let pos = 485-this.value * 485/(this.max-this.min);
+        output1.setAttribute("style", "margin-right: " + pos + "px");
+      }
+
+      slider2.oninput = function() {
+        output2.innerHTML = this.value;
+        let pos = 480-this.value * 480/(this.max-this.min);
+        output2.setAttribute("style", "margin-right: " + pos + "px");
+      }
+
+      slider1.oninput()
+      slider2.oninput()
 
 
 			function preventDefaults (e) {
@@ -145,7 +172,20 @@
 				clickstart = [mouseX,mouseY];
 			}
 
+      function onMouseEnter(event){
+        if(mouseEnterTimer != 0){
+          mouseEnterTimer = 11+mouseEnterTimer;
+        } else{
+          mouseEnterTimer = 11;
+        }
+      }
+
 			function onMouseLeave(event){
+        if(mouseEnterTimer != 0){
+          mouseEnterTimer = -11+mouseEnterTimer;
+        } else{
+          mouseEnterTimer = -11;
+        }
 				butt = -1;
         startx = 0;
         starty = 0;
@@ -157,8 +197,14 @@
 
       window.onresize = canvasResize;
       function canvasResize(initialize) {
+        console.log("resize!")
         canvas.width  = 500-30;
         canvas.height = canvas.width;
+        if(canvas.clientWidth>470){
+          if(mouseEnterTimer<=10 ){
+            canvas.setAttribute("style", "width: " + 500 + "px");
+          }
+        }
         ctx.fillStyle = '#13171A';
         //ctx.fillStyle = canvascolor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);

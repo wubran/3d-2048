@@ -2,6 +2,8 @@
   blurple = "rgba(140, 150, 250, 1)";
   gray = "rgba(153, 170, 181, 1)";
   canvas = document.getElementById('3d');
+  newGameButt = document.getElementById('newGameButt');
+
   var ctx = canvas.getContext('2d');
 
   var butt = -1; // 0 left, 1 middle, 2 right
@@ -11,6 +13,7 @@
   var starty = 0;
   var clickstart = [0,0];
   var mousemoved = false;
+  var mouseEnterTimer = 0;
 
   var pause = true;
   var sliding = false;
@@ -29,6 +32,15 @@
   var cubesize = (4*1.5)/gridth;
   var explodeFac = 3;
   var revolvespeed = 0.01;
+
+  var indicator;
+  var grid;
+
+  let originleft = 0;
+  let targetleft = -100;
+  let butttarget = -70;
+  let originwidth = 470;
+  let targetwidth = 670;
 
   var dotradius = 6;
   var toggledots = false;
@@ -85,23 +97,6 @@
 
   canvasResize(true);
 
-  var slider1 = document.getElementById("slider1");
-  var output1 = document.getElementById("output1");
-  output1.innerHTML = slider1.value; // Display the default slider value
-
-  var slider2 = document.getElementById("slider2");
-  var output2 = document.getElementById("output2");
-  output2.innerHTML = slider2.value; // Display the default slider value
-
-
-  // Update the current slider value (each time you drag the slider handle)
-  slider1.oninput = function() {
-    output1.innerHTML = this.value;
-  }
-  slider2.oninput = function() {
-    output2.innerHTML = this.value;
-  }
-
   function randomRange(min, max){ //inclusive, inclusive
     let interval = 1 + max-min; //plus 1 because rounding shenanigans
     let answer = Math.trunc(interval*Math.random() + min);
@@ -146,17 +141,18 @@
   outline.popTimer = 10;
   outline.updatepoints((gridth+0.3)*cubesize);
 
-  let indicator;
 
   // initialize grid
-  let grid = new Grid(gridth);
-  grid.newcube()
-  grid.newcube()
-  console.log(grid.cubes);
-  refresh();
+  newGame();
 
   //console.log(ctx.getImageData(10,10,50,50))
-
+  function newGame(){
+    grid = new Grid(gridth);
+    grid.newcube()
+    grid.newcube()
+    console.log(grid.cubes);
+    refresh();
+  }
   function draworigin(){
     for(let dot of originpoints){
       dot.project(camera);
@@ -242,6 +238,33 @@
       if(revolvespeed != 0){
         camera.orbit(revolvespeed,0);
       }
+    }
+    if(mouseEnterTimer>0){
+
+      canvas.setAttribute("style", "left: " + (targetleft+(originleft-targetleft)*(mouseEnterTimer-1)/10)
+                          + "px; top: "+(targetleft+(originleft-targetleft)*(mouseEnterTimer-1)/10)+"px;");
+      canvas.setAttribute("width", (targetwidth+(originwidth-targetwidth)*(mouseEnterTimer-1)/10) + "px");
+      canvas.setAttribute("height", (targetwidth+(originwidth-targetwidth)*(mouseEnterTimer-1)/10) + "px");
+
+      newGameButt.setAttribute("style", "float:right; top: "+(butttarget+(originleft-butttarget)*(mouseEnterTimer-1)/10)+"px;");
+
+      xcenter = canvas.width/2;
+      ycenter = canvas.height/2;
+
+      mouseEnterTimer--;
+    } else if(mouseEnterTimer<0){
+
+      canvas.setAttribute("style", "left: " + (originleft-(targetleft-originleft)*(mouseEnterTimer+1)/10)
+                          + "px; top: "+(originleft-(targetleft-originleft)*(mouseEnterTimer+1)/10)+"px;");
+      canvas.setAttribute("width", (originwidth-(targetwidth-originwidth)*(mouseEnterTimer+1)/10) + "px");
+      canvas.setAttribute("height", (originwidth-(targetwidth-originwidth)*(mouseEnterTimer+1)/10) + "px");
+
+      newGameButt.setAttribute("style", "float:right; top: "+(originleft-(butttarget-originleft)*(mouseEnterTimer+1)/10)+"px;");
+
+      xcenter = canvas.width/2;
+      ycenter = canvas.height/2;
+
+      mouseEnterTimer++;
     }
     refresh();
     if(startx!=0){

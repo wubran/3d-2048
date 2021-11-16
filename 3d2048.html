@@ -22,24 +22,18 @@ body {
 	height: auto;
 }
 .mainColumn{
-	box-sizing: border-box;
 	border:0px solid #FF0000;
-	border-radius:6px;
 	margin:0px auto;
 	margin-top: 30px;
 	padding: 0px;
-	position:relative;
 	width: 80%;
 	max-width: 500px;
 	height: 100%;
-	/* background: #bbada0; */
 }
 .inColumn{
 	display: block;
-	box-sizing: border-box;
 	border:0px solid #bbada0;
 	margin: 0px;
-	position:relative;
 	width: 100%;
 	max-width: 500px;
 	height:112.8px;
@@ -52,22 +46,21 @@ h1.title{
 	/* float: left; */
 }
 canvas {
-	box-sizing: border-box;
 	border:15px solid #bbada0;
 	border-radius:6px;
-	margin: 0px;
-	margin-top: 40px;
-	position:relative;
-	width: 100%;
-	max-width: 500px;
+	margin: 40px auto 10px;
+	/* width: 80%; */
 	background: #eee4da;
-	/* background: rgb(205,193,180);  */
+
+	position:relative;
 }
+
 p {
 	color: #776e65;
 	font-size: 18px;
 	margin: 0;
 }
+
 .slidecontainer {
   width: 100%; /* Width of the outside container */
 }
@@ -106,6 +99,38 @@ p {
   background: rgb(143,122,102); /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
+
+p.sliderIndicator{
+	text-align: right;
+}
+
+a{
+	color:inherit;
+	font-weight: bold;
+}
+
+hr{
+	color: rgb(187,173,160);
+}
+button{
+	background-color: rgb(143,122,102);
+	border-radius: 3px;
+	padding: 0 20px;
+	height: 40px;
+	/* line-height: 42px; */
+	cursor: pointer;
+	border-color: rgb(143,122,102);
+	font:inherit;
+	font-size: 18px;
+	color:#f9f6f2;
+	font-weight: bold;
+	box-shadow: none;
+	position:relative;
+}
+button:hover {
+  background-color: rgb(123,102,82);
+  color: white;
+}
 </style>
 	<body>
 		<div class="mainColumn">
@@ -113,23 +138,35 @@ p {
 				<h1 class = "title">2048 3D</h1>
 			</div>
 			<div class="inColumn" style="height:44.8px;">
-				<p>A parody by <strong>Brian Wu!</strong></p>
-				<p>Based on 2048 by <strong>Gabriele Cirulli.</strong></p>
-				<p style = "font-size:12px">Which was also based on 1024 by <strong>Veewo Studio.</strong></p>
+				<button id="newGameButt" type="button" style="float:right;" onclick="newGame()">New Game</button>
+				<p>A parody by
+					<a href="https://github.com/wubran" target="blank">Brian Wu!</a>
+				</p>
+				<p>Based on
+					<a href="https://play2048.co/" target="blank">2048</a> by
+					<a href="https://github.com/gabrielecirulli" target="blank">Gabriele Cirulli.</a>
+				</p>
+				<p style = "font-size:12px">Which was also based on
+					<a href="https://apps.apple.com/us/app/1024/id823499224" target="blank">1024</a> by
+					<a href="https://www.veewo.com/" target="blank">Veewo Studio.</a>
+				</p>
 				<!-- <p style = "font-size:6px">Which was also based on <strong>Ur Mom.</strong></p>
 				<p style = "font-size:3px">Words words words words <strong>haha</strong></p> -->
 			</div>
-			<canvas id="3d"></canvas>
+
+			<canvas id="3d" ></canvas>
+
 			<div class = "inColumn">
 				<div class="slidecontainer">
 					<p>Random Slider!</p>
 				  <input type="range" min="1" max="100" value="21" class="slider" id="slider1">
-					<p id="output1"></p>
+					<p class = sliderIndicator id="output1"></p>
 				</div>
+				<hr>
 				<div class="slidecontainer">
 					<p>Another Random Slider!</p>
 					<input type="range" min="1" max="100" value="69" class="slider" id="slider2">
-					<p id="output2"></p>
+					<p class = sliderIndicator id="output2"></p>
 				</div>
 			</div>
 			<div>
