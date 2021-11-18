@@ -222,8 +222,8 @@
 			  mouseX = event.offsetX;
 			  mouseY = event.offsetY;
 				if(butt == 2){
-					let diffx = mouseX-clickstart[0];
-					let diffy = mouseY-clickstart[1];
+					let diffx = clickstart[0] - (xcenter-mouseX);
+					let diffy = clickstart[1] - (ycenter-mouseY);
 					camera.orbit(-20*diffx/(1000), 20*diffy/(1000));
 
 				}else if(sliding){
@@ -240,7 +240,7 @@
             indicator.draw(originsize);
           }
         }
-				clickstart = [mouseX,mouseY];
+				clickstart = [xcenter-mouseX,ycenter-mouseY]; //must use center because cavnas corners move when resizing
 			}
 
       function onMouseEnter(event){
