@@ -2,160 +2,15 @@
 <html style = "background-color:#faf8ef;">
 <head>
 	<title>3d 2048</title>
+
 	<!-- <link rel="preload" href="fonts/ClearSans-Regular.woff" as="font" type="font/woff">
 	<link rel="preload" href="fonts/ClearSans-Bold.woff" as="font" type="font/woff"> -->
-	<link href="fonts/clear-sans.css" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'">
-	<noscript><link href="fonts/clear-sans.css?ff=1&wps=true" rel=stylesheet></noscript>
+	<!-- <link href="css/clear-sans.css" rel="stylesheet" as="style" onload="this.onload=null;this.rel='stylesheet'">
+	<noscript><link href="css/clear-sans.css?ff=1&wps=true" rel=stylesheet></noscript> -->
 
+	<link rel="stylesheet" href="css/clear-sans.css">
+	<link rel="stylesheet" href="css/styles.css">
 </head>
-<style>
-html {
-	margin:0;
-	height: 190%;
-	background: #eee4da59;
-	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-}
-body {
-	margin: 0px;
-	margin-bottom: 80px;
-	padding-bottom: 100px;
-	height: auto;
-}
-.mainColumn{
-	border:0px solid #FF0000;
-	margin:0px auto;
-	margin-top: 30px;
-	padding: 0px;
-	width: 80%;
-	max-width: 500px;
-	height: 100%;
-}
-.inColumn{
-	display: block;
-	border:0px solid #bbada0;
-	margin: 0px;
-	width: 100%;
-	max-width: 500px;
-	height:112.8px;
-}
-h1.title{
-	margin:0px;
-	color: #776e65;
-	font-weight: bold;
-	font-size: 80px;
-	/* float: left; */
-}
-canvas {
-	border:15px solid #bbada0;
-	border-radius:6px;
-	margin: 40px auto 10px;
-	/* width: 80%; */
-	background: #eee4da;
-
-	position:relative;
-}
-
-p {
-	color: #776e65;
-	font-size: 18px;
-	margin: 0;
-}
-
-.slidecontainer {
-  width: 100%; /* Width of the outside container */
-}
-
-/* The slider itself */
-.slider {
-  -webkit-appearance: none;  /* Override default CSS styles */
-  appearance: none;
-  width: 100%; /* Full-width */
-  height: 25px; /* Specified height */
-  background: rgb(187,173,160); /* Grey background */
-  outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-  transition: opacity .2s;
-}
-
-/* Mouse-over effects */
-.slider:hover {
-  opacity: 1; /* Fully shown on mouse-over */
-}
-
-/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
-  appearance: none;
-  width: 25px; /* Set a specific slider handle width */
-  height: 25px; /* Slider handle height */
-  background: rgb(143,122,102); /* Green background */
-  cursor: pointer; /* Cursor on hover */
-}
-
-.slider::-moz-range-thumb {
-  width: 25px; /* Set a specific slider handle width */
-  height: 25px; /* Slider handle height */
-  background: rgb(143,122,102); /* Green background */
-  cursor: pointer; /* Cursor on hover */
-}
-
-p.sliderIndicator{
-	text-align: right;
-}
-
-a{
-	color:inherit;
-	font-weight: bold;
-}
-
-hr{
-	color: rgb(187,173,160);
-}
-button{
-	background-color: rgb(143,122,102);
-	border-radius: 3px;
-	border-style:solid;
-	border-width: 0px;
-	padding: 0 20px;
-	height: 40px;
-	cursor: pointer;
-	border-color: rgb(143,122,102);
-	font:inherit;
-	font-size: 18px;
-	color:#f9f6f2;
-	font-weight: bold;
-	box-shadow: none;
-	position:relative;
-	margin:0px;
-}
-button:hover {
-  background-color: rgb(123,102,82);
-  color: white;
-}
-.tabL {
-	margin-left: 30px;
-}
-.tabR {
-	margin-right: 30px;
-}
-.darker{
-	background-color: rgb(232,229,219);
-}
-.container{
-	display:flex;
-	width:100%;
-}
-.typicalFlex{
-	flex-grow: 1;
-}
-.subtitle{
-	margin: 15px auto;
-	font-size: 20px;
-	text-align: center;
-	font-weight: bold;
-}
-</style>
 	<body>
 		<div class="mainColumn">
 			<div class="inColumn">
@@ -181,7 +36,7 @@ button:hover {
 			<canvas id="3d" ></canvas>
 
 			<div class = "inColumn">
-				<p class="subtitle">3D 2048 Controls:</p>
+				<h2 class="subtitle">3D 2048 Controls:</h2>
 				<div class="container">
 					<div class = "typicalFlex">
 						<p class="tabL darker"><strong>• Rotate: </strong></p>
@@ -189,8 +44,8 @@ button:hover {
 						<p class="tabL darker"><strong>• Make Move: </strong></p>
 						<p class="tabL"><strong>• Toggle Spinning: </strong></p>
 						<p class="tabL darker"><strong>• Speed-Move: </strong></p>
-						<p class="tabL"><strong>• Explode: </strong></p>
-						<p class="tabL darker"><strong>• Un-Explode: </strong></p>
+						<p class="tabL"><strong>• Explode*: </strong></p>
+						<p class="tabL darker"><strong>• Un-Explode*: </strong></p>
 
 					</div>
 					<div class = "typicalFlex">
@@ -204,6 +59,8 @@ button:hover {
 
 					</div>
 				</div>
+				<p class="note">*Explode seperates the grid into layers so that hidden blocks are visible.</p>
+				<p class="note">It is best used later in the game when many blocks are obscured.</p>
 				<p class="subtitle">Sliders!</p>
 				<hr>
 				<div class="slidecontainer">

@@ -77,7 +77,7 @@
       slider4.oninput = function() {
         output4.innerHTML = this.value;
 
-        let pos = 30+485-this.value * 485/(this.max-this.min);
+        let pos = 485-this.value * 485/(this.max-this.min);
         output4.setAttribute("style", "margin-right: " + pos + "px");
 
         numberShadow = this.value;
@@ -86,7 +86,7 @@
       slider5.oninput = function() {
         output5.innerHTML = this.value;
 
-        let pos = 30+485-this.value * 485/(this.max-this.min);
+        let pos = 485-this.value * 485/(this.max-this.min);
         output5.setAttribute("style", "margin-right: " + pos + "px");
 
         gridshadow = this.value; //queue the next game's gridth
@@ -95,7 +95,7 @@
       slider6.oninput = function() {
         output6.innerHTML = this.value;
 
-        let pos = 30+485-this.value * 485/(this.max-this.min);
+        let pos = 480-this.value * 480/(this.max-this.min);
         output6.setAttribute("style", "margin-right: " + pos + "px");
 
         cubeLineFactor = this.value; //queue the next game's gridth

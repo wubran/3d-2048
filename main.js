@@ -142,7 +142,7 @@
   slider3.oninput();
   slider4.oninput();
   slider5.oninput();
-  slider5.oninput();
+  slider6.oninput();
 
 
   //console.log(ctx.getImageData(10,10,50,50))
