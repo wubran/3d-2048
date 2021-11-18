@@ -178,7 +178,6 @@
 
 			    case ' ':
 			      pause = !pause;
-			      refresh(); //to display the "paused" after paused
 			      return;
 			    // default:
 			    // console.log(keyName);
@@ -188,21 +187,16 @@
 
 
 			function onClick(event){
-				if(canvas.style.cursor == "pointer"){
-					sliding = true;
-				}else{
-					//click = true;
-					butt = event.button;
-          if(event.button == 0){ //left click begin
-            startx = event.offsetX;
-            starty = event.offsetY;
-          }
-				}
+				//click = true;
+				butt = event.button;
+        if(event.button == 0){ //left click begin
+          startx = event.offsetX;
+          starty = event.offsetY;
+        }
 			}
 
 			function onRelease(event){
 				butt = -1;
-				sliding = false;
         if(event.button == 0){ //left click end
           let index = pickdirection();
           if(index!=-1){
@@ -225,10 +219,6 @@
 					let diffx = clickstart[0] - (xcenter-mouseX);
 					let diffy = clickstart[1] - (ycenter-mouseY);
 					camera.orbit(-20*diffx/(1000), 20*diffy/(1000));
-
-				}else if(sliding){
-					updatefov();
-					refresh();
 				}else if(startx!=0){
           let index = pickdirection();
           if(index!=-1){

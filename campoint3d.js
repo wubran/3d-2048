@@ -119,7 +119,6 @@ class Cam{
       this.pos[i]+=Math.sqrt(0.004*initcamdist**2*amt)*vect[i]*inout;
     }
     initcamdist += Math.sqrt(0.012*initcamdist**2*amt)*inout;
-    refresh();
     updatefov();
     zoomfac = 1/Math.sqrt(initcamdist);
 

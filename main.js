@@ -22,7 +22,6 @@
   var controlAlertTimer = 100;
 
   var pause = true;
-  var sliding = false;
 
   var xcenter = canvas.width/2;
   var ycenter = canvas.height/2;
