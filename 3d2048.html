@@ -207,15 +207,39 @@ button:hover {
 				<p class="subtitle">Sliders!</p>
 				<hr>
 				<div class="slidecontainer">
-					<p>Window Expansion</p>
-				  <input type="range" min="0" max="150" value="80" class="slider" id="slider1">
+					<p>Window Expansion (when mouse hovering)</p>
+				  <input type="range" min="0" max="200" value="80" class="slider" id="slider1">
 					<p class = sliderIndicator id="output1"></p>
 				</div>
 				<hr>
 				<div class="slidecontainer">
-					<p>Another Random Slider!</p>
-					<input type="range" min="1" max="100" value="69" class="slider" id="slider2">
+					<p>Explode Amount (how far do they separate)</p>
+					<input type="range" min="1" max="6" value="3" step = "0.1" class="slider" id="slider2">
 					<p class = sliderIndicator id="output2"></p>
+				</div>
+				<hr>
+				<div class="slidecontainer">
+					<p id="gridth message">Grid Width (grid volume: 16 boxes; updates next game)</p>
+					<input type="range" min="1" max="16" value="4" class="slider" id="slider3">
+					<p class = sliderIndicator id="output3"></p>
+				</div>
+				<hr>
+				<div class="slidecontainer">
+					<p>Text Shadow (just for contrast)</p>
+					<input type="range" min="0" max="20" value="6" class="slider" id="slider4">
+					<p class = sliderIndicator id="output4"></p>
+				</div>
+				<hr>
+				<div class="slidecontainer">
+					<p>Block Contrast (turn down if performance issues)</p>
+					<input type="range" min="0" max="20" value="0" class="slider" id="slider5">
+					<p class = sliderIndicator id="output5"></p>
+				</div>
+				<hr>
+				<div class="slidecontainer">
+					<p>Block Line Width (yum)</p>
+					<input type="range" min="0" max="8" value="2.2" step = "0.1" class="slider" id="slider6">
+					<p class = sliderIndicator id="output6"></p>
 				</div>
 			</div>
 			<div>

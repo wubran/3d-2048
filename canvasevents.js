@@ -20,6 +20,22 @@
       var output2 = document.getElementById("output2");
       output2.innerHTML = slider2.value; // Display the default slider value
 
+      var message3 = document.getElementById("gridth message");
+      var slider3 = document.getElementById("slider3");
+      var output3 = document.getElementById("output3");
+      output3.innerHTML = slider3.value; // Display the default slider value
+
+      var slider4 = document.getElementById("slider4");
+      var output4 = document.getElementById("output4");
+      output4.innerHTML = slider4.value; // Display the default slider value
+
+      var slider5 = document.getElementById("slider5");
+      var output5 = document.getElementById("output5");
+      output5.innerHTML = slider5.value; // Display the default slider value
+
+      var slider6 = document.getElementById("slider6");
+      var output6 = document.getElementById("output6");
+      output6.innerHTML = slider6.value; // Display the default slider value
 
       // Update the current slider value (each time you drag the slider handle)
       slider1.oninput = function() {
@@ -32,12 +48,59 @@
 
       slider2.oninput = function() {
         output2.innerHTML = this.value;
-        let pos = 480-this.value * 480/(this.max-this.min);
+        let pos = 100+480-this.value * 480/(this.max-this.min);
         output2.setAttribute("style", "margin-right: " + pos + "px");
+
+        explodeFac = this.value;
+        let setExplode = [1,1,1];
+        for(let i = 0; i<3; i++){
+          if(grid.explodeList[i] == true){
+            setExplode[i] = explodeFac;
+          }
+        }
+        grid.explode(setExplode);
       }
 
-      slider1.oninput()
-      slider2.oninput()
+      slider3.oninput = function() {
+        output3.innerHTML = this.value;
+        let plural = "es";
+        if(this.value==1){
+          plural = "";
+        }
+        message3.innerHTML = "Grid Width (grid volume: "+ this.value**3 +" box"+plural+"; updates next game)";
+        let pos = 30+485-this.value * 485/(this.max-this.min);
+        output3.setAttribute("style", "margin-right: " + pos + "px");
+
+        perameterQueue[0] = parseInt(this.value); //queue the next game's gridth
+      }
+
+      slider4.oninput = function() {
+        output4.innerHTML = this.value;
+
+        let pos = 30+485-this.value * 485/(this.max-this.min);
+        output4.setAttribute("style", "margin-right: " + pos + "px");
+
+        numberShadow = this.value;
+      }
+
+      slider5.oninput = function() {
+        output5.innerHTML = this.value;
+
+        let pos = 30+485-this.value * 485/(this.max-this.min);
+        output5.setAttribute("style", "margin-right: " + pos + "px");
+
+        gridshadow = this.value; //queue the next game's gridth
+      }
+
+      slider6.oninput = function() {
+        output6.innerHTML = this.value;
+
+        let pos = 30+485-this.value * 485/(this.max-this.min);
+        output6.setAttribute("style", "margin-right: " + pos + "px");
+
+        cubeLineFactor = this.value; //queue the next game's gridth
+        cubelinewidth = (16*cubeLineFactor)/gridth;
+      }
 
 
 			function preventDefaults (e) {
@@ -49,6 +112,12 @@
 			  const keyName = event.key;
         if(keyName.includes("Arrow") || keyName == " "){
           event.preventDefault();
+          if((firstkey == null || firstkey.includes("Arrow")) && swipes<4 && keyName!=" "){
+            controlAlertTimer = 0;
+            return;
+          }
+        }else if(["q","w","a","s","z","x"].includes(keyName)){ //if a letter control pressed,
+          firstkey = keyName; //doesnt really matter than firstkey gets reset a bunch
         }
 			  switch(keyName){
 			    case 'Control':
@@ -194,7 +263,10 @@
 			}
 
 			function scroll(event){
-				camera.zoom(Math.sign(event.deltaY));
+        // console.log(event.deltaY)
+				// camera.zoom(Math.sign(event.deltaY));
+        camera.zoom(Math.sign(event.deltaY),Math.sqrt(Math.abs(event.deltaY))/4);
+
 			}
 
       window.onresize = canvasResize;

@@ -66,7 +66,7 @@ class Cube{
     if(this.value != 69){
       let tempcenter = new Point(...this.pos, "red");
       tempcenter.project(camera);
-      ctx.font = "bold " + (0.5+0.5/(""+this.value).length)*(4*200*zoomfac)/gridth + "px Clear Sans";
+      ctx.font = "bold " + (0.5+0.5/(""+this.value).length)*(200*zoomfac*4)/gridth + "px Clear Sans";
       if(this.value >= 8){
         ctx.fillStyle = "rgb(249,246,242)"; //rgb(119,110,101)
         ctx.shadowColor = "black";
@@ -110,8 +110,9 @@ class Cube{
     if(cull < 0){
       ctx.beginPath();
       // ctx.strokeStyle = "rgba(255,255,255,0.4)"
-      ctx.strokeStyle = "#bbada0";;
-       ctx.shadowBlur = gridshadow;
+      ctx.strokeStyle = "#bbada0";
+      ctx.shadowColor = "black"
+      ctx.shadowBlur = gridshadow;
       if(this.value!=69){
         ctx.lineWidth = (3*zoomfac)*cubelinewidth;
       } else{
@@ -124,7 +125,9 @@ class Cube{
         ctx.lineTo(this.points[index].x, this.points[index].y);
       }
       ctx.fill();
-      ctx.stroke();
+      if(cubelinewidth != 0){
+        ctx.stroke();
+      }
       // ctx.shadowBlur = 0;
     }
   }
@@ -251,6 +254,7 @@ class Grid{
     this.cubes = newarray;
     if(changed){
       this.newcube();
+      swipes++;
     }
     refresh();
   }

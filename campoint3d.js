@@ -112,13 +112,13 @@ class Cam{
   slide(x,y){
 
   }
-  zoom(inout){
+  zoom(inout, amt){
     let vect = [0,0,0];
     for(var i = 0; i < 3; i++){
       vect[i] = this.vector[i]/(initcamdist);
-      this.pos[i]+=Math.sqrt(0.004*initcamdist**2)*vect[i]*inout;
+      this.pos[i]+=Math.sqrt(0.004*initcamdist**2*amt)*vect[i]*inout;
     }
-    initcamdist += Math.sqrt(0.012*initcamdist**2)*inout;
+    initcamdist += Math.sqrt(0.012*initcamdist**2*amt)*inout;
     refresh();
     updatefov();
     zoomfac = 1/Math.sqrt(initcamdist);

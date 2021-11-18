@@ -6,6 +6,8 @@
 
   var ctx = canvas.getContext('2d');
 
+  //PREFACE: I LIKE PERAMETERS IM SORRY
+
   var butt = -1; // 0 left, 1 middle, 2 right
   var mouseX = 0;
   var mouseY = 0;
@@ -13,7 +15,11 @@
   var starty = 0;
   var clickstart = [0,0];
   var mousemoved = false;
+  var swipes = 0;
   var mouseEnterTimer = 0;
+
+  var firstkey;
+  var controlAlertTimer = 100;
 
   var pause = true;
   var sliding = false;
@@ -40,7 +46,8 @@
 
   var dotradius = 6;
   var toggledots = false;
-  var cubelinewidth = (4*16)/gridth;
+  var cubeLineFactor = 3;
+  var cubelinewidth = (cubeLineFactor*16)/gridth;
   var togglelines = false;
 
   // var facesToDraw = [false, false, false, false, true, false]; //settings for bottom plates only
@@ -91,6 +98,8 @@
   colormap.set(4096, "rgb(100,200,255,")
   colormap.set(8192, "rgb(200,100,255,")
 
+  var perameterQueue = [gridth, 10];
+
   canvasResize(true);
 
   function randomRange(min, max){ //inclusive, inclusive
@@ -123,26 +132,42 @@
   //camera = new Cam(legs,legs,legs);
   camera = new Cam(39.33347860859019, 24.170967999528635, 19.20004600289643);
 
-  //initialize origin
-  let originsize = gridth*2.5;
-  originpoints = [];
-  originpoints.push(new Point(originsize,0,0,"red"));
-  originpoints.push(new Point(0,originsize,0,"lime"));
-  originpoints.push(new Point(0,0,originsize,"rgba(120,120,255,1)"));
-  originpoints.push(new Point(-originsize,0,0,"red"));
-  originpoints.push(new Point(0,-originsize,0,"lime"));
-  originpoints.push(new Point(0,0,-originsize,"rgba(120,120,255,1)"));
-
-  outline = new Cube(0,0,0,69, 69);
-  outline.popTimer = 10;
-  outline.updatepoints((gridth+0.3)*cubesize);
-
+  var originsize;
+  var originpoints = [];
 
   // initialize grid
   newGame();
+  slider1.oninput();
+  slider2.oninput();
+  slider3.oninput();
+  slider4.oninput();
+  slider5.oninput();
+  slider5.oninput();
+
 
   //console.log(ctx.getImageData(10,10,50,50))
   function newGame(){
+    // console.log(gridth);
+    gridth = perameterQueue[0];
+    cubesize = (4*1.5)/gridth;
+    cubelinewidth = (16*cubeLineFactor)/gridth;
+
+    // console.log(gridth);
+
+    //initialize origin
+    originsize = gridth*cubesize*2.5;
+    originpoints = [];
+    originpoints.push(new Point(originsize,0,0,"red"));
+    originpoints.push(new Point(0,originsize,0,"lime"));
+    originpoints.push(new Point(0,0,originsize,"rgba(120,120,255,1)"));
+    originpoints.push(new Point(-originsize,0,0,"red"));
+    originpoints.push(new Point(0,-originsize,0,"lime"));
+    originpoints.push(new Point(0,0,-originsize,"rgba(120,120,255,1)"));
+
+    outline = new Cube(0,0,0,69, 69);
+    outline.popTimer = 10;
+    outline.updatepoints((gridth+0.3)*cubesize);
+
     grid = new Grid(gridth);
     grid.newcube()
     grid.newcube()
@@ -229,12 +254,7 @@
 
   }
 
-  setInterval(function(){
-    if(!pause && (butt==-1)){
-      if(revolvespeed != 0){
-        camera.orbit(revolvespeed,0);
-      }
-    }
+  function boxResize(){
     if(mouseEnterTimer>0){
       let currentpos = targetleft-(targetleft)*(mouseEnterTimer-1)/10;
       let currentsize = 470-currentpos*2;
@@ -267,7 +287,9 @@
 
       mouseEnterTimer++;
     }
-    refresh();
+  }
+
+  function mouseIndicator(){
     if(startx!=0){
       if(startx!=mouseX || starty!=mouseY){
         ctx.beginPath();
@@ -290,6 +312,31 @@
           indicator.draw(originsize);
         }
       }
+    }
+  }
+
+  setInterval(function(){ //the big loop
+    if(!pause && (butt==-1)){
+      if(revolvespeed != 0){
+        camera.orbit(revolvespeed,0);
+      }
+    }
+
+    boxResize();
+    refresh();
+    mouseIndicator();
+    if(controlAlertTimer < 20){
+      ctx.font = "bold " + (canvas.width/20) + "px Clear Sans";
+      ctx.fillStyle = "rgba(210,0,0,"+(20-controlAlertTimer)/10+")";
+      ctx.shadowColor = "black";
+      ctx.shadowBlur = 4;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("Consider reading the controls first.",0,canvas.width - ((controlAlertTimer+6)**3)/50 - 10)
+      ctx.font = "bold " + (canvas.width/40) + "px Clear Sans";
+      ctx.fillText("Exploding the Grid is not recommended until more tiles have spawned.",0,canvas.width - ((controlAlertTimer+4)**3)/50)
+
+      controlAlertTimer+=0.1;
     }
     if(butt>-1){
       draworigin();
