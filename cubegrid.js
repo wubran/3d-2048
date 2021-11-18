@@ -256,7 +256,7 @@ class Grid{
       this.newcube();
       swipes++;
     }
-    refresh();
+    //refresh();
   }
   draw(){
     let distances = [];
