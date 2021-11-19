@@ -174,15 +174,26 @@
     refresh();
   }
   function draworigin(){
+    let names = ["w","s","x","q","a","z"];
+    i = 0;
     for(let dot of originpoints){
       dot.project(camera);
-      dot.draw();
+      dot.draw(50*zoomfac);
       ctx.lineWidth = 2;
       ctx.strokeStyle = dot.color;
+      ctx.fillStyle = "white";
       ctx.beginPath();
       ctx.moveTo(xcenter,ycenter);
       ctx.lineTo(dot.x, dot.y);
       ctx.stroke();
+      ctx.font = "bold " + 100*zoomfac + "px Clear Sans";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "black";
+      ctx.shadowBlur = 4;
+      ctx.fillText(names[i], dot.x, dot.y);
+      ctx.shadowBlur = 0;
+      i++; //lazy to change the for loop
     }
   }
 
