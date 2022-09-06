@@ -138,6 +138,7 @@ button:hover {
 }
 .typicalFlex{
 	flex-grow: 1;
+	/* text-align: center; */
 }
 .subtitle{
 	margin: 15px auto;

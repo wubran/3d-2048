@@ -336,8 +336,8 @@ function combine(ray, i=0){
     return ray;
   }
   if(ray[i].value == ray[i+1].value){
-    ray[i].value *= 2;
-    ray.splice(i+1, 1);
+    ray[i+1].value *= 2;
+    ray.splice(i, 1);
   }
   return combine(ray, i+1);
 }
